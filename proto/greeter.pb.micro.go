@@ -31,33 +31,34 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Client API for Greeter service
+// Client API for Cinema service
 
-type GreeterService interface {
-	Hello(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+type CinemaService interface {
+	AddCinema(ctx context.Context, in *CinemaRequest, opts ...client.CallOption) (*CinemaResponse, error)
+	DeleteCinema(ctx context.Context, in *CinemaRequest, opts ...client.CallOption) (*CinemaResponse, error)
 }
 
-type greeterService struct {
+type cinemaService struct {
 	c    client.Client
 	name string
 }
 
-func NewGreeterService(name string, c client.Client) GreeterService {
+func NewCinemaService(name string, c client.Client) CinemaService {
 	if c == nil {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
 		name = "proto"
 	}
-	return &greeterService{
+	return &cinemaService{
 		c:    c,
 		name: name,
 	}
 }
 
-func (c *greeterService) Hello(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "Greeter.Hello", in)
-	out := new(Response)
+func (c *cinemaService) AddCinema(ctx context.Context, in *CinemaRequest, opts ...client.CallOption) (*CinemaResponse, error) {
+	req := c.c.NewRequest(c.name, "Cinema.AddCinema", in)
+	out := new(CinemaResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -65,27 +66,119 @@ func (c *greeterService) Hello(ctx context.Context, in *Request, opts ...client.
 	return out, nil
 }
 
-// Server API for Greeter service
-
-type GreeterHandler interface {
-	Hello(context.Context, *Request, *Response) error
-}
-
-func RegisterGreeterHandler(s server.Server, hdlr GreeterHandler, opts ...server.HandlerOption) error {
-	type greeter interface {
-		Hello(ctx context.Context, in *Request, out *Response) error
+func (c *cinemaService) DeleteCinema(ctx context.Context, in *CinemaRequest, opts ...client.CallOption) (*CinemaResponse, error) {
+	req := c.c.NewRequest(c.name, "Cinema.DeleteCinema", in)
+	out := new(CinemaResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
 	}
-	type Greeter struct {
-		greeter
+	return out, nil
+}
+
+// Server API for Cinema service
+
+type CinemaHandler interface {
+	AddCinema(context.Context, *CinemaRequest, *CinemaResponse) error
+	DeleteCinema(context.Context, *CinemaRequest, *CinemaResponse) error
+}
+
+func RegisterCinemaHandler(s server.Server, hdlr CinemaHandler, opts ...server.HandlerOption) error {
+	type cinema interface {
+		AddCinema(ctx context.Context, in *CinemaRequest, out *CinemaResponse) error
+		DeleteCinema(ctx context.Context, in *CinemaRequest, out *CinemaResponse) error
 	}
-	h := &greeterHandler{hdlr}
-	return s.Handle(s.NewHandler(&Greeter{h}, opts...))
+	type Cinema struct {
+		cinema
+	}
+	h := &cinemaHandler{hdlr}
+	return s.Handle(s.NewHandler(&Cinema{h}, opts...))
 }
 
-type greeterHandler struct {
-	GreeterHandler
+type cinemaHandler struct {
+	CinemaHandler
 }
 
-func (h *greeterHandler) Hello(ctx context.Context, in *Request, out *Response) error {
-	return h.GreeterHandler.Hello(ctx, in, out)
+func (h *cinemaHandler) AddCinema(ctx context.Context, in *CinemaRequest, out *CinemaResponse) error {
+	return h.CinemaHandler.AddCinema(ctx, in, out)
+}
+
+func (h *cinemaHandler) DeleteCinema(ctx context.Context, in *CinemaRequest, out *CinemaResponse) error {
+	return h.CinemaHandler.DeleteCinema(ctx, in, out)
+}
+
+// Client API for Movie service
+
+type MovieService interface {
+	AddMovie(ctx context.Context, in *MovieRequest, opts ...client.CallOption) (*MovieResponse, error)
+	DeleteMovie(ctx context.Context, in *MovieRequest, opts ...client.CallOption) (*MovieResponse, error)
+}
+
+type movieService struct {
+	c    client.Client
+	name string
+}
+
+func NewMovieService(name string, c client.Client) MovieService {
+	if c == nil {
+		c = client.NewClient()
+	}
+	if len(name) == 0 {
+		name = "proto"
+	}
+	return &movieService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *movieService) AddMovie(ctx context.Context, in *MovieRequest, opts ...client.CallOption) (*MovieResponse, error) {
+	req := c.c.NewRequest(c.name, "Movie.AddMovie", in)
+	out := new(MovieResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *movieService) DeleteMovie(ctx context.Context, in *MovieRequest, opts ...client.CallOption) (*MovieResponse, error) {
+	req := c.c.NewRequest(c.name, "Movie.DeleteMovie", in)
+	out := new(MovieResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Movie service
+
+type MovieHandler interface {
+	AddMovie(context.Context, *MovieRequest, *MovieResponse) error
+	DeleteMovie(context.Context, *MovieRequest, *MovieResponse) error
+}
+
+func RegisterMovieHandler(s server.Server, hdlr MovieHandler, opts ...server.HandlerOption) error {
+	type movie interface {
+		AddMovie(ctx context.Context, in *MovieRequest, out *MovieResponse) error
+		DeleteMovie(ctx context.Context, in *MovieRequest, out *MovieResponse) error
+	}
+	type Movie struct {
+		movie
+	}
+	h := &movieHandler{hdlr}
+	return s.Handle(s.NewHandler(&Movie{h}, opts...))
+}
+
+type movieHandler struct {
+	MovieHandler
+}
+
+func (h *movieHandler) AddMovie(ctx context.Context, in *MovieRequest, out *MovieResponse) error {
+	return h.MovieHandler.AddMovie(ctx, in, out)
+}
+
+func (h *movieHandler) DeleteMovie(ctx context.Context, in *MovieRequest, out *MovieResponse) error {
+	return h.MovieHandler.DeleteMovie(ctx, in, out)
 }

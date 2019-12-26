@@ -2,17 +2,34 @@ syntax = "proto3";
 
 package proto;
 
-service Greeter {
-    rpc Hello(Request) returns (Response) {}
+service Cinema {
+    rpc AddCinema (CinemaRequest) returns (CinemaResponse) {
+    }
+    rpc DeleteCinema (CinemaRequest) returns (CinemaResponse) {
+    }
 }
 
-message Request {
+message CinemaRequest {
     string name = 1;
 }
 
-message Response {
+message CinemaResponse {
     string greeting = 1;
 }
 
+service Movie {
+    rpc AddMovie (MovieRequest) returns (MovieResponse) {
+    }
+    rpc DeleteMovie (MovieRequest) returns (MovieResponse) {
+    }
+}
+
+message MovieRequest {
+    string name = 1;
+}
+
+message MovieResponse {
+    string greeting = 1;
+}
 
 
