@@ -7,24 +7,27 @@ import (
 	"github.com/micro/go-micro"
 )
 
-type Movie struct {}
+type Movie struct {
+	movies map[string]bool
+}
 
-func (mv *Movie) AddMovie(ctx context.Context, req *proto.MovieRequest, rsp *proto.MovieResponse) error {
-	rsp.Greeting = "Hello" + req.Name
+func (mv *Movie) AddMovie(ctx context.Context, req *proto.MovieRequest, rsp *proto.Response) error {
 	return nil
 }
 
-func (mv *Movie) DeleteMovie(ctx context.Context, req *proto.MovieRequest, rsp *proto.MovieResponse) error {
-	rsp.Greeting = "Hello" + req.Name
+func (mv *Movie) DeleteMovie(ctx context.Context, req *proto.MovieRequest, rsp *proto.Response) error {
 	return nil
 }
 
+func (mv *Movie) GetMovies(ctx context.Context, req *proto.Request, rsp *proto.MovieResponse) error {
+	return nil
+}
 
 //Start Service for movie class
-func StartMoviesService() {
+func StartMovieService() {
 	//Create a new Service. Add name address and context
 	service := micro.NewService(
-		micro.Name("cinema"),
+		micro.Name("movie"),
 	)
 	// Init will parse the command line flags
 	service.Init()

@@ -3,33 +3,113 @@ syntax = "proto3";
 package proto;
 
 service Cinema {
-    rpc AddCinema (CinemaRequest) returns (CinemaResponse) {
+    rpc AddCinema (CinemaRequest) returns (Response) {
     }
-    rpc DeleteCinema (CinemaRequest) returns (CinemaResponse) {
+    rpc DeleteCinema (CinemaRequest) returns (Response) {
+    }
+    rpc GetCinemas (Request) returns (CinemaResponse) {
     }
 }
 
 message CinemaRequest {
     string name = 1;
+    int32 seatRows = 2;
+    int32 seatRowCapacity = 3;
 }
 
 message CinemaResponse {
-    string greeting = 1;
+    repeated CinemaRequest Value = 1;
 }
 
 service Movie {
-    rpc AddMovie (MovieRequest) returns (MovieResponse) {
+    rpc AddMovie (MovieRequest) returns (Response) {
     }
-    rpc DeleteMovie (MovieRequest) returns (MovieResponse) {
+    rpc DeleteMovie (MovieRequest) returns (Response) {
+    }
+    rpc GetMovies (Request) returns (MovieResponse) {
     }
 }
 
 message MovieRequest {
-    string name = 1;
+    string movieTitle = 1;
 }
 
 message MovieResponse {
+    repeated MovieRequest Value = 1;
+}
+
+service Reservation {
+    rpc MakeReservation (ReservationRequest) returns (Response) {
+    }
+    rpc DeleteReservation (ReservationRequest) returns (Response) {
+    }
+    rpc CheckReservation (ReservationRequest) returns (Response) {
+    }
+    rpc GetReservations (Request) returns (ReservationResponse) {
+    }
+}
+
+message ReservationRequest {
+    string user = 1;
+    int32 reservationId = 2;
+    int32 showing = 3; //verknüpfung von Kinosaal und Film
+    int32 seats = 4;
+    int32 reserved = 5;
+}
+
+message ReservationResponse {
+    repeated ReservationRequest Value = 1;
+}
+
+service Showing {
+    rpc AddShowing (ShowingRequest) returns (Response) {
+    }
+    rpc DeleteShowing (ShowingRequest) returns (Response) {
+    }
+
+}
+
+message ShowingRequest {
+    int32 id = 1;
+    string cinemaHall = 2;
+    string movie = 3;
+}
+
+message ShowingResponse {
+    repeated ShowingRequest Value = 1;
+}
+
+service User {
+    rpc AddUser (UserRequest) returns (Response) {
+    }
+    rpc DeleteUser (UserRequest) returns (Response) {
+    }
+    rpc GetUsers (Request) returns (Response) {
+    }
+}
+
+message UserRequest {
+    string name = 1; //Reservation und User verknüpfung mittels user name
+}
+
+message UserResponse {
+    repeated UserRequest Value = 1;
+}
+
+//--------------------------------------------------------
+
+//Standard message for Requests
+message Request {
     string greeting = 1;
+}
+
+//Standard message for Response
+message Response {
+    //TODO
+    bool success = 1;
+    string message = 2;
+    string error = 3;
+    string greeting = 4;
 }
 
 

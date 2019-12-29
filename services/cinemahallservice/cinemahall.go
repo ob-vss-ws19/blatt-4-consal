@@ -8,23 +8,28 @@ import (
 )
 
 type Cinema struct {
-	cinemaName string
+	CinemaName       string
+	SeatRows         int32
+	SeatRowsCapacity int32
+}
+
+type CinemaRequest struct {
+	//TODO: add map
 }
 
 //functions for cinema class
-func (cm *Cinema) AddCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.CinemaResponse) error {
+func (cm *Cinema) AddCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.Response) error {
 	rsp.Greeting = "Hello" + req.Name
 
 	return nil
 }
 
-func (cm *Cinema) DeleteCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.CinemaResponse) error {
+func (cm *Cinema) DeleteCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.Response) error {
 	rsp.Greeting = "Hello" + req.Name
 	return nil
 }
 
-func (cm *Cinema) GetCinemas(ctx context.Context, req *proto.CinemaRequest, rsp *proto.CinemaResponse) error {
-	rsp.Greeting = "Hello" + req.Name
+func (cm *Cinema) GetCinemas(ctx context.Context, req *proto.Request, rsp *proto.CinemaResponse) error {
 	return nil
 }
 
