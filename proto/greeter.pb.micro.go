@@ -327,33 +327,33 @@ func (h *reservationHandler) GetReservations(ctx context.Context, in *Request, o
 	return h.ReservationHandler.GetReservations(ctx, in, out)
 }
 
-// Client API for Showing service
+// Client API for Show service
 
-type ShowingService interface {
-	AddShowing(ctx context.Context, in *ShowingRequest, opts ...client.CallOption) (*Response, error)
-	DeleteShowing(ctx context.Context, in *ShowingRequest, opts ...client.CallOption) (*Response, error)
+type ShowService interface {
+	AddShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error)
+	DeleteShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error)
 }
 
-type showingService struct {
+type showService struct {
 	c    client.Client
 	name string
 }
 
-func NewShowingService(name string, c client.Client) ShowingService {
+func NewShowService(name string, c client.Client) ShowService {
 	if c == nil {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
 		name = "proto"
 	}
-	return &showingService{
+	return &showService{
 		c:    c,
 		name: name,
 	}
 }
 
-func (c *showingService) AddShowing(ctx context.Context, in *ShowingRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "Showing.AddShowing", in)
+func (c *showService) AddShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Show.AddShowing", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -362,8 +362,8 @@ func (c *showingService) AddShowing(ctx context.Context, in *ShowingRequest, opt
 	return out, nil
 }
 
-func (c *showingService) DeleteShowing(ctx context.Context, in *ShowingRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "Showing.DeleteShowing", in)
+func (c *showService) DeleteShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Show.DeleteShowing", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -372,35 +372,35 @@ func (c *showingService) DeleteShowing(ctx context.Context, in *ShowingRequest, 
 	return out, nil
 }
 
-// Server API for Showing service
+// Server API for Show service
 
-type ShowingHandler interface {
-	AddShowing(context.Context, *ShowingRequest, *Response) error
-	DeleteShowing(context.Context, *ShowingRequest, *Response) error
+type ShowHandler interface {
+	AddShowing(context.Context, *ShowRequest, *Response) error
+	DeleteShowing(context.Context, *ShowRequest, *Response) error
 }
 
-func RegisterShowingHandler(s server.Server, hdlr ShowingHandler, opts ...server.HandlerOption) error {
-	type showing interface {
-		AddShowing(ctx context.Context, in *ShowingRequest, out *Response) error
-		DeleteShowing(ctx context.Context, in *ShowingRequest, out *Response) error
+func RegisterShowHandler(s server.Server, hdlr ShowHandler, opts ...server.HandlerOption) error {
+	type show interface {
+		AddShowing(ctx context.Context, in *ShowRequest, out *Response) error
+		DeleteShowing(ctx context.Context, in *ShowRequest, out *Response) error
 	}
-	type Showing struct {
-		showing
+	type Show struct {
+		show
 	}
-	h := &showingHandler{hdlr}
-	return s.Handle(s.NewHandler(&Showing{h}, opts...))
+	h := &showHandler{hdlr}
+	return s.Handle(s.NewHandler(&Show{h}, opts...))
 }
 
-type showingHandler struct {
-	ShowingHandler
+type showHandler struct {
+	ShowHandler
 }
 
-func (h *showingHandler) AddShowing(ctx context.Context, in *ShowingRequest, out *Response) error {
-	return h.ShowingHandler.AddShowing(ctx, in, out)
+func (h *showHandler) AddShowing(ctx context.Context, in *ShowRequest, out *Response) error {
+	return h.ShowHandler.AddShowing(ctx, in, out)
 }
 
-func (h *showingHandler) DeleteShowing(ctx context.Context, in *ShowingRequest, out *Response) error {
-	return h.ShowingHandler.DeleteShowing(ctx, in, out)
+func (h *showHandler) DeleteShowing(ctx context.Context, in *ShowRequest, out *Response) error {
+	return h.ShowHandler.DeleteShowing(ctx, in, out)
 }
 
 // Client API for User service
@@ -408,7 +408,7 @@ func (h *showingHandler) DeleteShowing(ctx context.Context, in *ShowingRequest, 
 type UserService interface {
 	AddUser(ctx context.Context, in *UserRequest, opts ...client.CallOption) (*Response, error)
 	DeleteUser(ctx context.Context, in *UserRequest, opts ...client.CallOption) (*Response, error)
-	GetUsers(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+	GetUsers(ctx context.Context, in *Request, opts ...client.CallOption) (*UserResponse, error)
 }
 
 type userService struct {
@@ -449,9 +449,9 @@ func (c *userService) DeleteUser(ctx context.Context, in *UserRequest, opts ...c
 	return out, nil
 }
 
-func (c *userService) GetUsers(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
+func (c *userService) GetUsers(ctx context.Context, in *Request, opts ...client.CallOption) (*UserResponse, error) {
 	req := c.c.NewRequest(c.name, "User.GetUsers", in)
-	out := new(Response)
+	out := new(UserResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -464,14 +464,14 @@ func (c *userService) GetUsers(ctx context.Context, in *Request, opts ...client.
 type UserHandler interface {
 	AddUser(context.Context, *UserRequest, *Response) error
 	DeleteUser(context.Context, *UserRequest, *Response) error
-	GetUsers(context.Context, *Request, *Response) error
+	GetUsers(context.Context, *Request, *UserResponse) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
 	type user interface {
 		AddUser(ctx context.Context, in *UserRequest, out *Response) error
 		DeleteUser(ctx context.Context, in *UserRequest, out *Response) error
-		GetUsers(ctx context.Context, in *Request, out *Response) error
+		GetUsers(ctx context.Context, in *Request, out *UserResponse) error
 	}
 	type User struct {
 		user
@@ -492,6 +492,6 @@ func (h *userHandler) DeleteUser(ctx context.Context, in *UserRequest, out *Resp
 	return h.UserHandler.DeleteUser(ctx, in, out)
 }
 
-func (h *userHandler) GetUsers(ctx context.Context, in *Request, out *Response) error {
+func (h *userHandler) GetUsers(ctx context.Context, in *Request, out *UserResponse) error {
 	return h.UserHandler.GetUsers(ctx, in, out)
 }

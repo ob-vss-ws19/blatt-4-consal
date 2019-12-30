@@ -61,22 +61,22 @@ message ReservationResponse {
     repeated ReservationRequest Value = 1;
 }
 
-service Showing {
-    rpc AddShowing (ShowingRequest) returns (Response) {
+service Show {
+    rpc AddShowing (ShowRequest) returns (Response) {
     }
-    rpc DeleteShowing (ShowingRequest) returns (Response) {
+    rpc DeleteShowing (ShowRequest) returns (Response) {
     }
 
 }
 
-message ShowingRequest {
+message ShowRequest {
     int32 id = 1;
     string cinemaHall = 2;
     string movie = 3;
 }
 
-message ShowingResponse {
-    repeated ShowingRequest Value = 1;
+message ShowResponse {
+    repeated ShowRequest Value = 1;
 }
 
 service User {
@@ -84,7 +84,7 @@ service User {
     }
     rpc DeleteUser (UserRequest) returns (Response) {
     }
-    rpc GetUsers (Request) returns (Response) {
+    rpc GetUsers (Request) returns (UserResponse) {
     }
 }
 
@@ -109,7 +109,6 @@ message Response {
     bool success = 1;
     string message = 2;
     string error = 3;
-    string greeting = 4;
 }
 
 

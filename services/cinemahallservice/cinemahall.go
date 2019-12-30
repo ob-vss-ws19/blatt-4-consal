@@ -15,17 +15,18 @@ type Cinema struct {
 
 type CinemaRequest struct {
 	//TODO: add map
+
 }
 
 //functions for cinema class
 func (cm *Cinema) AddCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.Response) error {
-	rsp.Greeting = "Hello" + req.Name
+	rsp.Message = "Hello" + req.Name
 
 	return nil
 }
 
 func (cm *Cinema) DeleteCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.Response) error {
-	rsp.Greeting = "Hello" + req.Name
+	rsp.Message = "Hello" + req.Name
 	return nil
 }
 
