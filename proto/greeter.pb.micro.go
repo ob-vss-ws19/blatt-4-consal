@@ -332,6 +332,7 @@ func (h *reservationHandler) GetReservations(ctx context.Context, in *Request, o
 type ShowService interface {
 	AddShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error)
 	DeleteShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error)
+	GetShows(ctx context.Context, in *Request, opts ...client.CallOption) (*ShowResponse, error)
 }
 
 type showService struct {
@@ -372,17 +373,29 @@ func (c *showService) DeleteShowing(ctx context.Context, in *ShowRequest, opts .
 	return out, nil
 }
 
+func (c *showService) GetShows(ctx context.Context, in *Request, opts ...client.CallOption) (*ShowResponse, error) {
+	req := c.c.NewRequest(c.name, "Show.GetShows", in)
+	out := new(ShowResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Show service
 
 type ShowHandler interface {
 	AddShowing(context.Context, *ShowRequest, *Response) error
 	DeleteShowing(context.Context, *ShowRequest, *Response) error
+	GetShows(context.Context, *Request, *ShowResponse) error
 }
 
 func RegisterShowHandler(s server.Server, hdlr ShowHandler, opts ...server.HandlerOption) error {
 	type show interface {
 		AddShowing(ctx context.Context, in *ShowRequest, out *Response) error
 		DeleteShowing(ctx context.Context, in *ShowRequest, out *Response) error
+		GetShows(ctx context.Context, in *Request, out *ShowResponse) error
 	}
 	type Show struct {
 		show
@@ -401,6 +414,10 @@ func (h *showHandler) AddShowing(ctx context.Context, in *ShowRequest, out *Resp
 
 func (h *showHandler) DeleteShowing(ctx context.Context, in *ShowRequest, out *Response) error {
 	return h.ShowHandler.DeleteShowing(ctx, in, out)
+}
+
+func (h *showHandler) GetShows(ctx context.Context, in *Request, out *ShowResponse) error {
+	return h.ShowHandler.GetShows(ctx, in, out)
 }
 
 // Client API for User service

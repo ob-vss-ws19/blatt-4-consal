@@ -8,14 +8,15 @@ import (
 )
 
 type Show struct {
-	Shows map[string]*ShowRequest
-	Id    int32
+	Id int32
 }
 
 type ShowRequest struct {
-	Movie  string
-	Cinema string
+	Movie      string
+	Cinemahall string
 }
+
+var shows = make(map[int32]*ShowRequest)
 
 func (sw *Show) AddShowing(ctx context.Context, req *proto.ShowRequest, rsp *proto.Response) error {
 	return nil
@@ -26,6 +27,9 @@ func (sw *Show) DeleteShowing(ctx context.Context, req *proto.ShowRequest, rsp *
 }
 
 func (sw *Show) GetShowings(ctx context.Context, req *proto.Request, rsp *proto.ShowResponse) error {
+	for k, v := range shows {
+		rsp.Value = append(rsp.Value, &proto.ShowRequest{Id: k, CinemaHall: v.Cinemahall, Movie: v.Movie})
+	}
 	return nil
 }
 
