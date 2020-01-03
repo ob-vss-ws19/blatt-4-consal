@@ -8,13 +8,20 @@ import (
 )
 
 type Reservation struct {
-	reservationNumber string
-	//TODO: add map
+	reservationNumber string // int or string?
 }
 
 type ReservationRequest struct {
-	//TODO
+	user          string
+	reservationId int32
+	show          int32
+	seats         int32
+	reserved      bool
 }
+
+//initialize a map using built in function make
+var reservations = make(map[int32]*ReservationRequest)
+
 
 func (rv *Reservation) MakeReservation(ctx context.Context, req *proto.ReservationRequest, rsp *proto.Response) error {
 	return nil

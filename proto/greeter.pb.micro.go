@@ -330,8 +330,8 @@ func (h *reservationHandler) GetReservations(ctx context.Context, in *Request, o
 // Client API for Show service
 
 type ShowService interface {
-	AddShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error)
-	DeleteShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error)
+	AddShow(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error)
+	DeleteShow(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error)
 	GetShows(ctx context.Context, in *Request, opts ...client.CallOption) (*ShowResponse, error)
 }
 
@@ -353,8 +353,8 @@ func NewShowService(name string, c client.Client) ShowService {
 	}
 }
 
-func (c *showService) AddShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "Show.AddShowing", in)
+func (c *showService) AddShow(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Show.AddShow", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -363,8 +363,8 @@ func (c *showService) AddShowing(ctx context.Context, in *ShowRequest, opts ...c
 	return out, nil
 }
 
-func (c *showService) DeleteShowing(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "Show.DeleteShowing", in)
+func (c *showService) DeleteShow(ctx context.Context, in *ShowRequest, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Show.DeleteShow", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -386,15 +386,15 @@ func (c *showService) GetShows(ctx context.Context, in *Request, opts ...client.
 // Server API for Show service
 
 type ShowHandler interface {
-	AddShowing(context.Context, *ShowRequest, *Response) error
-	DeleteShowing(context.Context, *ShowRequest, *Response) error
+	AddShow(context.Context, *ShowRequest, *Response) error
+	DeleteShow(context.Context, *ShowRequest, *Response) error
 	GetShows(context.Context, *Request, *ShowResponse) error
 }
 
 func RegisterShowHandler(s server.Server, hdlr ShowHandler, opts ...server.HandlerOption) error {
 	type show interface {
-		AddShowing(ctx context.Context, in *ShowRequest, out *Response) error
-		DeleteShowing(ctx context.Context, in *ShowRequest, out *Response) error
+		AddShow(ctx context.Context, in *ShowRequest, out *Response) error
+		DeleteShow(ctx context.Context, in *ShowRequest, out *Response) error
 		GetShows(ctx context.Context, in *Request, out *ShowResponse) error
 	}
 	type Show struct {
@@ -408,12 +408,12 @@ type showHandler struct {
 	ShowHandler
 }
 
-func (h *showHandler) AddShowing(ctx context.Context, in *ShowRequest, out *Response) error {
-	return h.ShowHandler.AddShowing(ctx, in, out)
+func (h *showHandler) AddShow(ctx context.Context, in *ShowRequest, out *Response) error {
+	return h.ShowHandler.AddShow(ctx, in, out)
 }
 
-func (h *showHandler) DeleteShowing(ctx context.Context, in *ShowRequest, out *Response) error {
-	return h.ShowHandler.DeleteShowing(ctx, in, out)
+func (h *showHandler) DeleteShow(ctx context.Context, in *ShowRequest, out *Response) error {
+	return h.ShowHandler.DeleteShow(ctx, in, out)
 }
 
 func (h *showHandler) GetShows(ctx context.Context, in *Request, out *ShowResponse) error {

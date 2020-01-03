@@ -52,9 +52,9 @@ service Reservation {
 message ReservationRequest {
     string user = 1;
     int32 reservationId = 2;
-    int32 showing = 3; //verknüpfung von Kinosaal und Film
+    int32 show = 3; //verknüpfung von Kinosaal und Film
     int32 seats = 4;
-    int32 reserved = 5;
+    bool reserved = 5;
 }
 
 message ReservationResponse {
@@ -62,9 +62,9 @@ message ReservationResponse {
 }
 
 service Show {
-    rpc AddShowing (ShowRequest) returns (Response) {
+    rpc AddShow (ShowRequest) returns (Response) {
     }
-    rpc DeleteShowing (ShowRequest) returns (Response) {
+    rpc DeleteShow (ShowRequest) returns (Response) {
     }
     rpc GetShows (Request) returns (ShowResponse) {
     }
@@ -101,13 +101,10 @@ message UserResponse {
 
 //Standard message for Requests
 message Request {
-    string greeting = 1;
 }
 
 //Standard message for Response
 message Response {
-    //TODO
     bool success = 1;
     string message = 2;
-    string error = 3;
 }

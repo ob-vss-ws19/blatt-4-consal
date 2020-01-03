@@ -18,15 +18,15 @@ type ShowRequest struct {
 
 var shows = make(map[int32]*ShowRequest)
 
-func (sw *Show) AddShowing(ctx context.Context, req *proto.ShowRequest, rsp *proto.Response) error {
+func (sw *Show) AddShow(ctx context.Context, req *proto.ShowRequest, rsp *proto.Response) error {
 	return nil
 }
 
-func (sw *Show) DeleteShowing(ctx context.Context, req *proto.ShowRequest, rsp *proto.Response) error {
+func (sw *Show) DeleteShow(ctx context.Context, req *proto.ShowRequest, rsp *proto.Response) error {
 	return nil
 }
 
-func (sw *Show) GetShowings(ctx context.Context, req *proto.Request, rsp *proto.ShowResponse) error {
+func (sw *Show) GetShows(ctx context.Context, req *proto.Request, rsp *proto.ShowResponse) error {
 	for k, v := range shows {
 		rsp.Value = append(rsp.Value, &proto.ShowRequest{Id: k, CinemaHall: v.Cinemahall, Movie: v.Movie})
 	}

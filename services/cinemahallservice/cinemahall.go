@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/micro/go-micro"
+	"github.com/micro/go-micro/client"
 )
 
 type CinemaRequest struct {
@@ -14,7 +15,6 @@ type CinemaRequest struct {
 }
 
 type Cinema struct {
-	//Cinemas map[string]*CinemaRequest
 }
 
 //initialize a map using built in function make
@@ -26,7 +26,7 @@ func (cm *Cinema) AddCinema(ctx context.Context, req *proto.CinemaRequest, rsp *
 	//if ok true -> key exists in the map
 	if _, ok := cinemas[req.Name]; ok {
 		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Cinema %s already exists", req.Name)
+		rsp.Message = fmt.Sprintf("Cinema %s does already exist", req.Name)
 		return nil
 	}
 	//Cinema doesn't exist. Add new one
@@ -36,6 +36,25 @@ func (cm *Cinema) AddCinema(ctx context.Context, req *proto.CinemaRequest, rsp *
 	return nil
 }
 
+func deleteCorrespondingShows(cinemahall string) {
+	var client client.Client
+	show := proto.NewShowService("showing", client)
+
+	rsp, err := show.GetShows(context.TODO(), &proto.Request{})
+	if err != nil {
+		fmt.Printf("Error: %s", err)
+	}
+	//Iterate through DATA struc (shows) and call delete show
+	for _, v := range rsp.Value {
+		if cinemahall == v.CinemaHall {
+			_, err := show.DeleteShow(context.TODO(), &proto.ShowRequest{Id: v.Id})
+			if err != nil {
+				fmt.Printf("Error: %s", err)
+			}
+		}
+	}
+}
+
 func (cm *Cinema) DeleteCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.Response) error {
 	if _, ok := cinemas[req.Name]; !ok {
 		rsp.Success = false
@@ -43,34 +62,9 @@ func (cm *Cinema) DeleteCinema(ctx context.Context, req *proto.CinemaRequest, rs
 		return nil
 	}
 	//Cinema does exist
-	//Delete shows for cinema aswell?
-	//TODO: conjuction between cinema and show
-	// Setup and the client
-	/*	func runClient(service micro.Service) {
-		// Create new greeter client
-		greeter := proto.NewGreeterService("greeter", service.Client())
-
-		// Call the greeter
-		rsp, err := greeter.Hello(context.TODO(), &proto.Request{Name: "John"})
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		// Print response
-		fmt.Println(rsp.Greeting)
-	}*/
-	//create Show service client to get shows available and delete the ones
-	//for this cinema
-/*	var client client.Client
-	show := proto.NewShowService("showing", client)
-
-	rsp, err := show.GetShows()
-		if err == nil {
-
-		}*/
-	//TODO: handle nil. Iterate thorugh DATA struc and call delete showing
-
+	//create Show service client and delete corresponding shows
+	deleteCorrespondingShows(req.Name)
+	//delete cinemahall from map
 	delete(cinemas, req.Name)
 	rsp.Success = true
 	rsp.Message = fmt.Sprint("Cinema %s was deleted", req.Name)
@@ -86,8 +80,8 @@ func (cm *Cinema) GetCinemas(ctx context.Context, req *proto.Request, rsp *proto
 
 //Start Service for movie class
 func StartCinemaService() {
-	//Create a new Service. Add name address and context
-	var port int32 = 8081
+	//Create a new Service. Include name, version, address and context
+	var port int32 = 8082
 	service := micro.NewService(
 		micro.Name("cinema"),
 		micro.Version("latest"),
