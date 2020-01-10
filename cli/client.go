@@ -68,9 +68,9 @@ func main() {
 	service.Init(micro.Address(fmt.Sprintf(": #{8091}")))
 
 	//TODO: Switch Cases
-	num := "cinema"
-	switch num {
-	case "cinema":
+	arg := flag.Arg(0)
+	switch arg {
+	case "cm":
 		cm = proto.NewCinemaService(("cinema"), service.Client())
 		fmt.Print("hi")
 		//service.Init();
@@ -92,9 +92,19 @@ func main() {
 		case "delete":
 		case "get":
 		}
-	case "movie":
+	case "mv":
 		//TODO: Add more cases and implementations
+	case "rv":
+		//TODO: Add more cases and implementations
+	case "sw":
+		//TODO: Add more cases and implementations
+	case "us":
+		//TODO: Add more cases and implementations
+	case "fill":
+
 	default:
+		// Falls falsch benutzt, Usagemöglichkeiten anzeigen
+		flag.Usage()
 		return
 	}
 
