@@ -124,7 +124,21 @@ func main() {
 			rv.GetReservations(context.TODO(), &proto.Request{})
 		}
 	case "sw":
-		//TODO: Add more cases and implementations
+		sw = proto.NewShowService("show", service.Client())
+		secondFlag := flag.Arg(1)
+		switch secondFlag {
+		case "add":
+			sw.AddShow(context.TODO(), &proto.ShowRequest{
+				Movie:      flag.Arg(2),
+				CinemaHall: flag.Arg(3),
+			})
+		case "delete":
+			sw.DeleteShow(context.TODO(), &proto.ShowRequest{
+				Id: stringToInt(flag.Arg(2)),
+			})
+		case "get":
+			sw.GetShows(context.TODO(), &proto.Request{})
+		}
 	case "us":
 		us = proto.NewUserService("user", service.Client())
 		secondFlag := flag.Arg(1)
