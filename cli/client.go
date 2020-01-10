@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/micro/go-micro"
+	"strconv"
 )
 
 var (
@@ -67,35 +68,42 @@ func main() {
 	service := micro.NewService(micro.Name("client"))
 	service.Init(micro.Address(fmt.Sprintf(": #{8091}")))
 
-	//TODO: Switch Cases
 	firstFlag := flag.Arg(0)
 	switch firstFlag {
 	case "cm":
 		cm = proto.NewCinemaService(("cinema"), service.Client())
-		fmt.Print("hi")
-		//service.Init();
-		switch flag.Arg(1) {
-		//TODO
+		secondFlag := flag.Arg(1)
+		switch secondFlag {
 		case "add":
-			// Call the service method TODO: remove values
-			rsp, err := cm.AddCinema(context.TODO(), &proto.CinemaRequest{Name: "Cinemaxx", SeatRows: 12, SeatRowCapacity: 5})
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			// Print response
-			if rsp.Success {
-				fmt.Printf("Success: %s", rsp.Message)
-			} else {
-				fmt.Printf("Error: %s", rsp.Message)
-			}
+			cm.AddCinema(context.TODO(), &proto.CinemaRequest{
+				Name:            flag.Arg(2),
+				SeatRows:        stringToInt(flag.Arg(3)),
+				SeatRowCapacity: stringToInt(flag.Arg(4)),
+			})
 		case "delete":
+			cm.DeleteCinema(context.TODO(), &proto.CinemaRequest{
+				Name: flag.Arg(2),
+			})
 		case "get":
+			cm.GetCinemas(context.TODO(), &proto.Request{})
 		}
 	case "mv":
-		//TODO: Add more cases and implementations
+		mv = proto.NewMovieService("movie", service.Client())
+		secondFlag := flag.Arg(1)
+		switch secondFlag {
+		case "add":
+			mv.AddMovie(context.TODO(), &proto.MovieRequest{
+				MovieTitle: flag.Arg(2),
+			})
+		case "delete":
+			mv.DeleteMovie(context.TODO(), &proto.MovieRequest{
+				MovieTitle: flag.Arg(2),
+			})
+		case "get":
+			mv.GetMovies(context.TODO(), &proto.Request{})
+		}
 	case "rv":
-		//TODO: Add more cases and implementations
+
 	case "sw":
 		//TODO: Add more cases and implementations
 	case "us":
@@ -104,13 +112,18 @@ func main() {
 		switch secondFlag {
 		case "add":
 			// Füge neuen Benutzer hinzu
-			us.AddUser(context.TODO(), &proto.UserRequest{Name: secondFlag})
+			us.AddUser(context.TODO(), &proto.UserRequest{
+				Name: flag.Arg(2),
+			})
 		case "delete":
-			us.DeleteUser(context.TODO(), &proto.UserRequest{Name: secondFlag})
+			// Lösche Benutzer
+			us.DeleteUser(context.TODO(), &proto.UserRequest{
+				Name: flag.Arg(2),
+			})
 		case "get":
+			// Gebe alle Benutzer aus
 			us.GetUsers(context.TODO(), &proto.Request{})
 		}
-		//TODO: Add more cases and implementations
 	case "fill":
 
 	default:
@@ -119,4 +132,9 @@ func main() {
 		return
 	}
 
+}
+
+func stringToInt(toParse string) int32 {
+	newInt, _ := strconv.Atoi(toParse)
+	return int32(newInt)
 }
