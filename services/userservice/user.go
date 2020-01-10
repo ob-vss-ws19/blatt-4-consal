@@ -1,6 +1,5 @@
 package userservice
 
-
 import (
 	"blatt-4-consal/proto"
 	"context"
@@ -13,6 +12,19 @@ type User struct {
 }
 
 func (us *User) AddUser(ctx context.Context, req *proto.UserRequest, rsp *proto.Response) error {
+	// Erstelle neue Userliste falls noch keine existiert.
+	if us.Users == nil {
+		us.Users = make(map[string]bool)
+	}
+	// kontrollieren ob Benutzer schon existiert.
+	if _, exists := us.Users[req.Name]; exists {
+		rsp.Success = false
+		rsp.Message = fmt.Sprintf("# User '#{req.Name}' does exist already.")
+	}
+	// Setze neuen User in die Map
+	us.Users[req.Name] = true
+	rsp.Success = true
+	rsp.Message = fmt.Sprintf("# Created new User '#{req.Name}'.")
 	return nil
 }
 
