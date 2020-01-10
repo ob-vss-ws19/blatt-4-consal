@@ -50,11 +50,11 @@ service Reservation {
 }
 
 message ReservationRequest {
-    string user = 1;
-    int32 reservationId = 2;
-    int32 show = 3; //verknüpfung von Kinosaal und Film
-    int32 seats = 4;
-    bool reserved = 5;
+    int32 reservationID=1;
+    int32 showing=2;
+    int32 seats=3;
+    bool booked=4;
+    string user=5;
 }
 
 message ReservationResponse {

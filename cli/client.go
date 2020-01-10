@@ -103,7 +103,26 @@ func main() {
 			mv.GetMovies(context.TODO(), &proto.Request{})
 		}
 	case "rv":
-
+		rv = proto.NewReservationService("reservation", service.Client())
+		secondFlag := flag.Arg(1)
+		switch secondFlag {
+		case "check":
+			rv.CheckReservation(context.TODO(), &proto.ReservationRequest{
+				User:    flag.Arg(2),
+				Showing: stringToInt(flag.Arg(3)),
+				Seats:   stringToInt(flag.Arg(4)),
+			})
+		case "make":
+			rv.MakeReservation(context.TODO(), &proto.ReservationRequest{
+				ReservationID: stringToInt(flag.Arg(2)),
+			})
+		case "delete":
+			rv.DeleteReservation(context.TODO(), &proto.ReservationRequest{
+				ReservationID: stringToInt(flag.Arg(2)),
+			})
+		case "get":
+			rv.GetReservations(context.TODO(), &proto.Request{})
+		}
 	case "sw":
 		//TODO: Add more cases and implementations
 	case "us":

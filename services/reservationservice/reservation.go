@@ -5,23 +5,24 @@ import (
 	"context"
 	"fmt"
 	"github.com/micro/go-micro"
+	"sync"
 )
 
 type Reservation struct {
-	reservationNumber string // int or string?
+	reservations map[int32]*ReservationData
+	nextID       int32
+	mux          sync.RWMutex
 }
 
-type ReservationRequest struct {
-	user          string
-	reservationId int32
-	show          int32
-	seats         int32
-	reserved      bool
+type ReservationData struct {
+	showing int32
+	seats   int32
+	booked  bool
+	user    string
 }
 
 //initialize a map using built in function make
-var reservations = make(map[int32]*ReservationRequest)
-
+var reservations = make(map[int32]*ReservationData)
 
 func (rv *Reservation) MakeReservation(ctx context.Context, req *proto.ReservationRequest, rsp *proto.Response) error {
 	return nil
@@ -56,4 +57,3 @@ func StartReservationService() {
 		fmt.Println(err)
 	}
 }
-
