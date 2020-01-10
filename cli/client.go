@@ -68,8 +68,8 @@ func main() {
 	service.Init(micro.Address(fmt.Sprintf(": #{8091}")))
 
 	//TODO: Switch Cases
-	arg := flag.Arg(0)
-	switch arg {
+	firstFlag := flag.Arg(0)
+	switch firstFlag {
 	case "cm":
 		cm = proto.NewCinemaService(("cinema"), service.Client())
 		fmt.Print("hi")
@@ -99,6 +99,17 @@ func main() {
 	case "sw":
 		//TODO: Add more cases and implementations
 	case "us":
+		us = proto.NewUserService("user", service.Client())
+		secondFlag := flag.Arg(1)
+		switch secondFlag {
+		case "add":
+			// Füge neuen Benutzer hinzu
+			us.AddUser(context.TODO(), &proto.UserRequest{Name: secondFlag})
+		case "delete":
+			us.DeleteUser(context.TODO(), &proto.UserRequest{Name: secondFlag})
+		case "get":
+			us.GetUsers(context.TODO(), &proto.Request{})
+		}
 		//TODO: Add more cases and implementations
 	case "fill":
 
