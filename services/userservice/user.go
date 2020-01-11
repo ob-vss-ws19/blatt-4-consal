@@ -19,16 +19,17 @@ func (us *User) AddUser(ctx context.Context, req *proto.UserRequest, rsp *proto.
 	// kontrollieren ob Benutzer schon existiert.
 	if _, exists := us.Users[req.Name]; exists {
 		rsp.Success = false
-		rsp.Message = fmt.Sprintf("# User '#{req.Name}' does exist already.")
+		rsp.Message = fmt.Sprintf("User with name %s already exists.", req.Name)
 	}
 	// Setze neuen User in die Map
 	us.Users[req.Name] = true
 	rsp.Success = true
-	rsp.Message = fmt.Sprintf("# Created new User '#{req.Name}'.")
+	rsp.Message = fmt.Sprintf("# Created new User #{req.Name}.")
 	return nil
 }
 
 func (us *User) DeleteUser(ctx context.Context, req *proto.UserRequest, rsp *proto.Response) error {
+
 	return nil
 }
 
@@ -36,20 +37,23 @@ func (us *User) GetUsers(ctx context.Context, req *proto.Request, rsp *proto.Use
 	return nil
 }
 
-//Start Service for user class
-func StartMovieService() {
+// Start Service for user class
+func StartUserService(context context.Context) {
+	var port int64 = 8091
 	//Create a new Service. Add name address and context
 	service := micro.NewService(
-		micro.Name("user"),
+		micro.Name("User"),
+		micro.Address(fmt.Sprintf(":%v", port)),
+		micro.Context(context),
 	)
 	// Init will parse the command line flags
 	service.Init()
-	//Register handler
+	// Register handler
 	proto.RegisterUserHandler(service.Server(), new(User))
-	fmt.Println("User Service starting...")
-	//Run the Server
+	fmt.Println("User Service is starting...")
+	// Run the Server
 	if err := service.Run(); err != nil {
-		//Print error message if there is any
+		// Print error message if there is any
 		fmt.Println(err)
 	}
 }

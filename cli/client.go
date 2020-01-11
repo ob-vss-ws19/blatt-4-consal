@@ -66,7 +66,7 @@ func main() {
 	}
 
 	service := micro.NewService(micro.Name("client"))
-	service.Init(micro.Address(fmt.Sprintf(": #{8091}")))
+	service.Init(micro.Address(fmt.Sprintf(":%v", 8091)))
 
 	firstFlag := flag.Arg(0)
 	switch firstFlag {
@@ -140,25 +140,27 @@ func main() {
 			sw.GetShows(context.TODO(), &proto.Request{})
 		}
 	case "us":
-		us = proto.NewUserService("user", service.Client())
+		us = proto.NewUserService("User", service.Client())
 		secondFlag := flag.Arg(1)
 		switch secondFlag {
 		case "add":
 			// Füge neuen Benutzer hinzu
-			us.AddUser(context.TODO(), &proto.UserRequest{
+			fmt.Print(us.AddUser(context.TODO(), &proto.UserRequest{
 				Name: flag.Arg(2),
-			})
-		case "delete":
-			// Lösche Benutzer
-			us.DeleteUser(context.TODO(), &proto.UserRequest{
-				Name: flag.Arg(2),
-			})
-		case "get":
-			// Gebe alle Benutzer aus
-			us.GetUsers(context.TODO(), &proto.Request{})
-		}
-	case "fill":
+			}))
 
+			//case "delete":
+			//	// Lösche Benutzer
+			//	us.DeleteUser(context.TODO(), &proto.UserRequest{
+			//		Name: flag.Arg(2),
+			//	})
+			//case "get":
+			//	// Gebe alle Benutzer aus
+			//	us.GetUsers(context.TODO(), &proto.Request{})
+			//}
+
+		case "fill":
+		}
 	default:
 		// Falls falsch benutzt, Usagemöglichkeiten anzeigen
 		flag.Usage()
