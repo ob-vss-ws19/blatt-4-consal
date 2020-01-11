@@ -16,7 +16,7 @@ var movies = make(map[string]bool)
 
 func (mv *Movie) AddMovie(ctx context.Context, req *proto.MovieRequest, rsp *proto.Response) error {
 	if _, ok := movies[req.MovieTitle]; ok {
-		rsp.Success = false;
+		rsp.Success = false
 		rsp.Message = fmt.Sprintf("Movie %s does already exist", req.MovieTitle)
 		return nil
 	}
@@ -29,16 +29,16 @@ func (mv *Movie) AddMovie(ctx context.Context, req *proto.MovieRequest, rsp *pro
 
 func deleteCorrespondingShows(movieTitle string) {
 	var client client.Client
-	show := proto.NewShowService("showing", client)
+	showService := proto.NewShowService("show", client)
 
-	rsp, err := show.GetShows(context.TODO(), &proto.Request{})
+	rsp, err := showService.GetShows(context.TODO(), &proto.Request{})
 	if err != nil {
 		fmt.Printf("Error: %s", err)
 	}
 	//Iterate through DATA struc (shows) and call delete show
 	for _, v := range rsp.Value {
 		if movieTitle == v.Movie {
-			_, err := show.DeleteShow(context.TODO(), &proto.ShowRequest{Id: v.Id})
+			_, err := showService.DeleteShow(context.TODO(), &proto.ShowRequest{Id: v.Id})
 			if err != nil {
 				fmt.Printf("Error: %s", err)
 			}
@@ -70,7 +70,7 @@ func (mv *Movie) GetMovies(ctx context.Context, req *proto.Request, rsp *proto.M
 //Start Service for movie class
 func StartMovieService() {
 	//Create a new Service. Add name address and context
-	var port int32 = 8081
+	var port int32 = 8082
 	service := micro.NewService(
 		micro.Name("movie"),
 		micro.Version("latest"),

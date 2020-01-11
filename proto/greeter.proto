@@ -2,23 +2,23 @@ syntax = "proto3";
 
 package proto;
 
-service Cinema {
-    rpc AddCinema (CinemaRequest) returns (Response) {
+service Cinemahall {
+    rpc AddCinemahall (CinemahallRequest) returns (Response) {
     }
-    rpc DeleteCinema (CinemaRequest) returns (Response) {
+    rpc DeleteCinemahall (CinemahallRequest) returns (Response) {
     }
-    rpc GetCinemas (Request) returns (CinemaResponse) {
+    rpc GetCinemahalls (Request) returns (CinemahallResponse) {
     }
 }
 
-message CinemaRequest {
+message CinemahallRequest {
     string name = 1;
     int32 seatRows = 2;
     int32 seatRowCapacity = 3;
 }
 
-message CinemaResponse {
-    repeated CinemaRequest Value = 1;
+message CinemahallResponse {
+    repeated CinemahallRequest Value = 1;
 }
 
 service Movie {
@@ -43,18 +43,18 @@ service Reservation {
     }
     rpc DeleteReservation (ReservationRequest) returns (Response) {
     }
-    rpc CheckReservation (ReservationRequest) returns (Response) {
+    rpc ReservationInquiry (ReservationRequest) returns (Response) {
     }
     rpc GetReservations (Request) returns (ReservationResponse) {
     }
 }
 
 message ReservationRequest {
-    int32 reservationID=1;
-    int32 showing=2;
-    int32 seats=3;
-    bool booked=4;
-    string user=5;
+    string userName = 1;
+    int32 reservationId = 2;
+    int32 show = 3; //verknüpfung von Kinosaal und Film
+    int32 seats = 4;
+    bool reserved = 5;
 }
 
 message ReservationResponse {

@@ -31,34 +31,34 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Client API for Cinema service
+// Client API for Cinemahall service
 
-type CinemaService interface {
-	AddCinema(ctx context.Context, in *CinemaRequest, opts ...client.CallOption) (*Response, error)
-	DeleteCinema(ctx context.Context, in *CinemaRequest, opts ...client.CallOption) (*Response, error)
-	GetCinemas(ctx context.Context, in *Request, opts ...client.CallOption) (*CinemaResponse, error)
+type CinemahallService interface {
+	AddCinemahall(ctx context.Context, in *CinemahallRequest, opts ...client.CallOption) (*Response, error)
+	DeleteCinemahall(ctx context.Context, in *CinemahallRequest, opts ...client.CallOption) (*Response, error)
+	GetCinemahalls(ctx context.Context, in *Request, opts ...client.CallOption) (*CinemahallResponse, error)
 }
 
-type cinemaService struct {
+type cinemahallService struct {
 	c    client.Client
 	name string
 }
 
-func NewCinemaService(name string, c client.Client) CinemaService {
+func NewCinemahallService(name string, c client.Client) CinemahallService {
 	if c == nil {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
 		name = "proto"
 	}
-	return &cinemaService{
+	return &cinemahallService{
 		c:    c,
 		name: name,
 	}
 }
 
-func (c *cinemaService) AddCinema(ctx context.Context, in *CinemaRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "Cinema.AddCinema", in)
+func (c *cinemahallService) AddCinemahall(ctx context.Context, in *CinemahallRequest, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Cinemahall.AddCinemahall", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -67,8 +67,8 @@ func (c *cinemaService) AddCinema(ctx context.Context, in *CinemaRequest, opts .
 	return out, nil
 }
 
-func (c *cinemaService) DeleteCinema(ctx context.Context, in *CinemaRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "Cinema.DeleteCinema", in)
+func (c *cinemahallService) DeleteCinemahall(ctx context.Context, in *CinemahallRequest, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Cinemahall.DeleteCinemahall", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -77,9 +77,9 @@ func (c *cinemaService) DeleteCinema(ctx context.Context, in *CinemaRequest, opt
 	return out, nil
 }
 
-func (c *cinemaService) GetCinemas(ctx context.Context, in *Request, opts ...client.CallOption) (*CinemaResponse, error) {
-	req := c.c.NewRequest(c.name, "Cinema.GetCinemas", in)
-	out := new(CinemaResponse)
+func (c *cinemahallService) GetCinemahalls(ctx context.Context, in *Request, opts ...client.CallOption) (*CinemahallResponse, error) {
+	req := c.c.NewRequest(c.name, "Cinemahall.GetCinemahalls", in)
+	out := new(CinemahallResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -87,41 +87,41 @@ func (c *cinemaService) GetCinemas(ctx context.Context, in *Request, opts ...cli
 	return out, nil
 }
 
-// Server API for Cinema service
+// Server API for Cinemahall service
 
-type CinemaHandler interface {
-	AddCinema(context.Context, *CinemaRequest, *Response) error
-	DeleteCinema(context.Context, *CinemaRequest, *Response) error
-	GetCinemas(context.Context, *Request, *CinemaResponse) error
+type CinemahallHandler interface {
+	AddCinemahall(context.Context, *CinemahallRequest, *Response) error
+	DeleteCinemahall(context.Context, *CinemahallRequest, *Response) error
+	GetCinemahalls(context.Context, *Request, *CinemahallResponse) error
 }
 
-func RegisterCinemaHandler(s server.Server, hdlr CinemaHandler, opts ...server.HandlerOption) error {
-	type cinema interface {
-		AddCinema(ctx context.Context, in *CinemaRequest, out *Response) error
-		DeleteCinema(ctx context.Context, in *CinemaRequest, out *Response) error
-		GetCinemas(ctx context.Context, in *Request, out *CinemaResponse) error
+func RegisterCinemahallHandler(s server.Server, hdlr CinemahallHandler, opts ...server.HandlerOption) error {
+	type cinemahall interface {
+		AddCinemahall(ctx context.Context, in *CinemahallRequest, out *Response) error
+		DeleteCinemahall(ctx context.Context, in *CinemahallRequest, out *Response) error
+		GetCinemahalls(ctx context.Context, in *Request, out *CinemahallResponse) error
 	}
-	type Cinema struct {
-		cinema
+	type Cinemahall struct {
+		cinemahall
 	}
-	h := &cinemaHandler{hdlr}
-	return s.Handle(s.NewHandler(&Cinema{h}, opts...))
+	h := &cinemahallHandler{hdlr}
+	return s.Handle(s.NewHandler(&Cinemahall{h}, opts...))
 }
 
-type cinemaHandler struct {
-	CinemaHandler
+type cinemahallHandler struct {
+	CinemahallHandler
 }
 
-func (h *cinemaHandler) AddCinema(ctx context.Context, in *CinemaRequest, out *Response) error {
-	return h.CinemaHandler.AddCinema(ctx, in, out)
+func (h *cinemahallHandler) AddCinemahall(ctx context.Context, in *CinemahallRequest, out *Response) error {
+	return h.CinemahallHandler.AddCinemahall(ctx, in, out)
 }
 
-func (h *cinemaHandler) DeleteCinema(ctx context.Context, in *CinemaRequest, out *Response) error {
-	return h.CinemaHandler.DeleteCinema(ctx, in, out)
+func (h *cinemahallHandler) DeleteCinemahall(ctx context.Context, in *CinemahallRequest, out *Response) error {
+	return h.CinemahallHandler.DeleteCinemahall(ctx, in, out)
 }
 
-func (h *cinemaHandler) GetCinemas(ctx context.Context, in *Request, out *CinemaResponse) error {
-	return h.CinemaHandler.GetCinemas(ctx, in, out)
+func (h *cinemahallHandler) GetCinemahalls(ctx context.Context, in *Request, out *CinemahallResponse) error {
+	return h.CinemahallHandler.GetCinemahalls(ctx, in, out)
 }
 
 // Client API for Movie service
@@ -222,7 +222,7 @@ func (h *movieHandler) GetMovies(ctx context.Context, in *Request, out *MovieRes
 type ReservationService interface {
 	MakeReservation(ctx context.Context, in *ReservationRequest, opts ...client.CallOption) (*Response, error)
 	DeleteReservation(ctx context.Context, in *ReservationRequest, opts ...client.CallOption) (*Response, error)
-	CheckReservation(ctx context.Context, in *ReservationRequest, opts ...client.CallOption) (*Response, error)
+	ReservationInquiry(ctx context.Context, in *ReservationRequest, opts ...client.CallOption) (*Response, error)
 	GetReservations(ctx context.Context, in *Request, opts ...client.CallOption) (*ReservationResponse, error)
 }
 
@@ -264,8 +264,8 @@ func (c *reservationService) DeleteReservation(ctx context.Context, in *Reservat
 	return out, nil
 }
 
-func (c *reservationService) CheckReservation(ctx context.Context, in *ReservationRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "Reservation.CheckReservation", in)
+func (c *reservationService) ReservationInquiry(ctx context.Context, in *ReservationRequest, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Reservation.ReservationInquiry", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -289,7 +289,7 @@ func (c *reservationService) GetReservations(ctx context.Context, in *Request, o
 type ReservationHandler interface {
 	MakeReservation(context.Context, *ReservationRequest, *Response) error
 	DeleteReservation(context.Context, *ReservationRequest, *Response) error
-	CheckReservation(context.Context, *ReservationRequest, *Response) error
+	ReservationInquiry(context.Context, *ReservationRequest, *Response) error
 	GetReservations(context.Context, *Request, *ReservationResponse) error
 }
 
@@ -297,7 +297,7 @@ func RegisterReservationHandler(s server.Server, hdlr ReservationHandler, opts .
 	type reservation interface {
 		MakeReservation(ctx context.Context, in *ReservationRequest, out *Response) error
 		DeleteReservation(ctx context.Context, in *ReservationRequest, out *Response) error
-		CheckReservation(ctx context.Context, in *ReservationRequest, out *Response) error
+		ReservationInquiry(ctx context.Context, in *ReservationRequest, out *Response) error
 		GetReservations(ctx context.Context, in *Request, out *ReservationResponse) error
 	}
 	type Reservation struct {
@@ -319,8 +319,8 @@ func (h *reservationHandler) DeleteReservation(ctx context.Context, in *Reservat
 	return h.ReservationHandler.DeleteReservation(ctx, in, out)
 }
 
-func (h *reservationHandler) CheckReservation(ctx context.Context, in *ReservationRequest, out *Response) error {
-	return h.ReservationHandler.CheckReservation(ctx, in, out)
+func (h *reservationHandler) ReservationInquiry(ctx context.Context, in *ReservationRequest, out *Response) error {
+	return h.ReservationHandler.ReservationInquiry(ctx, in, out)
 }
 
 func (h *reservationHandler) GetReservations(ctx context.Context, in *Request, out *ReservationResponse) error {

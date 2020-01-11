@@ -8,46 +8,46 @@ import (
 	"github.com/micro/go-micro/client"
 )
 
-type CinemaRequest struct {
+type CinemahallRequest struct {
 	CinemaName       string
 	SeatRows         int32
 	SeatRowsCapacity int32
 }
 
-type Cinema struct {
+type Cinemahall struct {
 }
 
 //initialize a map using built in function make
-var cinemas = make(map[string]*CinemaRequest)
+var cinemas = make(map[string]*CinemahallRequest)
 
 //functions for cinema class
-func (cm *Cinema) AddCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.Response) error {
+func (cm *Cinemahall) AddCinemahall(ctx context.Context, req *proto.CinemahallRequest, rsp *proto.Response) error {
 	//A two-value assignment tests for the existence of a key
 	//if ok true -> key exists in the map
 	if _, ok := cinemas[req.Name]; ok {
 		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Cinema %s does already exist", req.Name)
+		rsp.Message = fmt.Sprintf("Cinemahall %s does already exist", req.Name)
 		return nil
 	}
 	//Cinema doesn't exist. Add new one
-	cinemas[req.Name] = &CinemaRequest{SeatRows: req.SeatRows, SeatRowsCapacity: req.SeatRowCapacity}
+	cinemas[req.Name] = &CinemahallRequest{SeatRows: req.SeatRows, SeatRowsCapacity: req.SeatRowCapacity}
 	rsp.Success = true
-	rsp.Message = fmt.Sprintf("New Cinema %s added", req.Name)
+	rsp.Message = fmt.Sprintf("New Cinemahall %s added", req.Name)
 	return nil
 }
 
-func deleteCorrespondingShows(cinemahall string) {
+func deleteCorrespondingShows(cinemahallName string) {
 	var client client.Client
-	show := proto.NewShowService("showing", client)
+	showService := proto.NewShowService("show", client)
 
-	rsp, err := show.GetShows(context.TODO(), &proto.Request{})
+	rsp, err := showService.GetShows(context.TODO(), &proto.Request{})
 	if err != nil {
 		fmt.Printf("Error: %s", err)
 	}
 	//Iterate through DATA struc (shows) and call delete show
 	for _, v := range rsp.Value {
-		if cinemahall == v.CinemaHall {
-			_, err := show.DeleteShow(context.TODO(), &proto.ShowRequest{Id: v.Id})
+		if cinemahallName == v.CinemaHall {
+			_, err := showService.DeleteShow(context.TODO(), &proto.ShowRequest{Id: v.Id})
 			if err != nil {
 				fmt.Printf("Error: %s", err)
 			}
@@ -55,10 +55,10 @@ func deleteCorrespondingShows(cinemahall string) {
 	}
 }
 
-func (cm *Cinema) DeleteCinema(ctx context.Context, req *proto.CinemaRequest, rsp *proto.Response) error {
+func (cm *Cinemahall) DeleteCinemahall(ctx context.Context, req *proto.CinemahallRequest, rsp *proto.Response) error {
 	if _, ok := cinemas[req.Name]; !ok {
 		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Cinema %s does not exist", req.Name)
+		rsp.Message = fmt.Sprintf("Cinemahall %s does not exist", req.Name)
 		return nil
 	}
 	//Cinema does exist
@@ -67,13 +67,13 @@ func (cm *Cinema) DeleteCinema(ctx context.Context, req *proto.CinemaRequest, rs
 	//delete cinemahall from map
 	delete(cinemas, req.Name)
 	rsp.Success = true
-	rsp.Message = fmt.Sprint("Cinema %s was deleted", req.Name)
+	rsp.Message = fmt.Sprint("Cinemahall %s was deleted", req.Name)
 	return nil
 }
 
-func (cm *Cinema) GetCinemas(ctx context.Context, req *proto.Request, rsp *proto.CinemaResponse) error {
+func (cm *Cinemahall) GetCinemahalls(ctx context.Context, req *proto.Request, rsp *proto.CinemahallResponse) error {
 	for k, v := range cinemas {
-		rsp.Value = append(rsp.Value, &proto.CinemaRequest{Name: k, SeatRowCapacity: v.SeatRowsCapacity, SeatRows: v.SeatRows})
+		rsp.Value = append(rsp.Value, &proto.CinemahallRequest{Name: k, SeatRowCapacity: v.SeatRowsCapacity, SeatRows: v.SeatRows})
 	}
 	return nil
 }
@@ -81,9 +81,9 @@ func (cm *Cinema) GetCinemas(ctx context.Context, req *proto.Request, rsp *proto
 //Start Service for movie class
 func StartCinemaService() {
 	//Create a new Service. Include name, version, address and context
-	var port int32 = 8082
+	var port int32 = 8081
 	service := micro.NewService(
-		micro.Name("cinema"),
+		micro.Name("cinemahall"),
 		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
 		micro.Context(nil), //needed
@@ -91,8 +91,8 @@ func StartCinemaService() {
 	// Init will parse the command line flags
 	service.Init()
 	//Register handler
-	proto.RegisterCinemaHandler(service.Server(), new(Cinema))
-	fmt.Println("Cinema Service starting...")
+	proto.RegisterCinemahallHandler(service.Server(), new(Cinemahall))
+	fmt.Println("Cinemahall Service starting...")
 	//Run the Server
 	if err := service.Run(); err != nil {
 		//Print error message if there is any
