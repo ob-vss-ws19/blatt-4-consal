@@ -68,7 +68,7 @@ func (mv *Movie) GetMovies(context context.Context, req *proto.Request, res *pro
 func StartMovieService(context context.Context) {
 	//Create a new Service. Add name address and context
 	var port int64
-	port = 3001
+	port = 8096
 	service := micro.NewService(
 		micro.Name("movie"),
 		micro.Address(fmt.Sprintf(":%v", port)),
