@@ -21,18 +21,35 @@ type Cinemahall struct {
 var cinemas = make(map[string]*CinemahallRequest)
 
 //functions for cinema class
-func (cm *Cinemahall) AddCinemahall(ctx context.Context, req *proto.CinemahallRequest, rsp *proto.Response) error {
-	//A two-value assignment tests for the existence of a key
+func (cm *Cinemahall) AddCinemahall(ctx context.Context, req *proto.CinemahallRequest, res *proto.Response) error {
+	// A two-value assignment tests for the existence of a key
 	//if ok true -> key exists in the map
-	if _, ok := cinemas[req.Name]; ok {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Cinemahall %s does already exist", req.Name)
+	if _, exists := cinemas[req.Name]; exists {
+		res.Success = true
+		res.Message = fmt.Sprintf("#ADD_CINE_FAIL: Cinemahall %s does already exist", req.Name)
 		return nil
 	}
 	//Cinema doesn't exist. Add new one
 	cinemas[req.Name] = &CinemahallRequest{SeatRows: req.SeatRows, SeatRowsCapacity: req.SeatRowCapacity}
-	rsp.Success = true
-	rsp.Message = fmt.Sprintf("New Cinemahall %s added", req.Name)
+	res.Success = true
+	res.Message = fmt.Sprintf("#ADD_CINE: Movie %s added", req.Name)
+	return nil
+}
+
+func (cm *Cinemahall) DeleteCinemahall(ctx context.Context, req *proto.CinemahallRequest, res *proto.Response) error {
+	if _, exists := cinemas[req.Name]; !exists {
+		res.Success = true
+		res.Message = fmt.Sprintf("#DELETE_CINE_FAIL: Cinema %s doesn't exist yet", req.Name)
+		return nil
+	}
+	//Cinema does exist
+	//create Show service client and delete corresponding shows
+	//delete cinemahall from map
+
+	//deleteCorrespondingShows(req.Name)
+	delete(cinemas, req.Name)
+	res.Success = true
+	res.Message = fmt.Sprintf("#DELETE_MOVIE: User %s deleted successfully", req.Name)
 	return nil
 }
 
@@ -40,35 +57,19 @@ func deleteCorrespondingShows(cinemahallName string) {
 	var client client.Client
 	showService := proto.NewShowService("show", client)
 
-	rsp, err := showService.GetShows(context.TODO(), &proto.Request{})
+	res, err := showService.GetShows(context.TODO(), &proto.Request{})
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		fmt.Printf("#DELETE_CINE_ERROR: %s", err)
 	}
 	//Iterate through DATA struc (shows) and call delete show
-	for _, v := range rsp.Value {
-		if cinemahallName == v.CinemaHall {
-			_, err := showService.DeleteShow(context.TODO(), &proto.ShowRequest{Id: v.Id})
+	for _, show := range res.Value {
+		if cinemahallName == show.CinemaHall {
+			_, err := showService.DeleteShow(context.TODO(), &proto.ShowRequest{Id: show.Id})
 			if err != nil {
-				fmt.Printf("Error: %s", err)
+				fmt.Printf("#DELETE_CINE_ERROR: %s", err)
 			}
 		}
 	}
-}
-
-func (cm *Cinemahall) DeleteCinemahall(ctx context.Context, req *proto.CinemahallRequest, rsp *proto.Response) error {
-	if _, ok := cinemas[req.Name]; !ok {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Cinemahall %s does not exist", req.Name)
-		return nil
-	}
-	//Cinema does exist
-	//create Show service client and delete corresponding shows
-	deleteCorrespondingShows(req.Name)
-	//delete cinemahall from map
-	delete(cinemas, req.Name)
-	rsp.Success = true
-	rsp.Message = fmt.Sprint("Cinemahall %s was deleted", req.Name)
-	return nil
 }
 
 func (cm *Cinemahall) GetCinemahalls(ctx context.Context, req *proto.Request, rsp *proto.CinemahallResponse) error {
@@ -79,14 +80,13 @@ func (cm *Cinemahall) GetCinemahalls(ctx context.Context, req *proto.Request, rs
 }
 
 //Start Service for movie class
-func StartCinemaService() {
+func StartCinemaService(context context.Context, port int64) {
 	//Create a new Service. Include name, version, address and context
-	var port int32 = 8081
 	service := micro.NewService(
 		micro.Name("cinemahall"),
 		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
-		micro.Context(nil), //needed
+		micro.Context(context), //needed
 	)
 	// Init will parse the command line flags
 	service.Init()
