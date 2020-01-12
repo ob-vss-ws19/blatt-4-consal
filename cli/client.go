@@ -23,38 +23,49 @@ func main() {
 
 	flag.Usage = func() {
 		fmt.Println("Usage:")
-		fmt.Println("client.exe SERVICE FUNCTION PARAMS")
-		fmt.Println("SERVICE")
-		fmt.Println(" cm")
-		fmt.Println("  FUNCTION")
-		fmt.Println("  -add PARAMS: name. Example: client.exe cinema add hall1")
-		fmt.Println("  -delete PARAMS: name. Example: client.exe cinema delete hall1")
-		fmt.Println("  -get: Example: client.exe cinema get")
-		fmt.Println(" mv")
-		fmt.Println("  FUNCTION")
-		fmt.Println("  -add PARAMS: title. Example: client.exe movie add shrek")
-		fmt.Println("  -delete PARAMS: title. Example: client.exe movie delete shrek")
-		fmt.Println("  -get: Example: client.exe movie get")
-		fmt.Println(" rv")
-		fmt.Println("  FUNCTION")
-		fmt.Println("  -request PARAMS: user showingID seats. Example: client.exe reservation request sepp 2 4")
-		fmt.Println("   Requests a reservation.")
-		fmt.Println("  -book PARAMS: reservationID. Example: client.exe reservation book 1")
-		fmt.Println("   Books a reservation.")
-		fmt.Println("  -delete PARAMS: reservationID. Example: client.exe reservation delete 1")
-		fmt.Println("  -get: Example: client.exe reservation get")
-		fmt.Println(" sw")
-		fmt.Println("  FUNCTION")
-		fmt.Println("  -add PARAMS: movie cinema. Example: client.exe showing add shrek hall1")
-		fmt.Println("  -delete PARAMS: showingID. Example: client.exe showing delete 4")
-		fmt.Println("  -get: Example: client.exe showing get")
-		fmt.Println(" us")
-		fmt.Println("  FUNCTION")
-		fmt.Println("  -add PARAMS: name. Example: client.exe user add sepp")
-		fmt.Println("  -delete PARAMS: name. Example: client.exe user delete sepp")
-		fmt.Println("  -get: Example: client.exe user get")
-		fmt.Println(" fill")
-		fmt.Println("  -Fills services with some data. Example: client.exe fill")
+		fmt.Println("client <SERVICE> <FUNCTION> <PARAMS>")
+
+		fmt.Println("<SERVICE>")
+		fmt.Println("us")
+		fmt.Println("	<FUNCTION>")
+		fmt.Println("	- add <PARAMS>: name. | Example: client us add user1")
+		fmt.Println("	- delete <PARAMS>: name. | Example: client us delete user1")
+		fmt.Println("	- get: | Example: client us get")
+		fmt.Println("")
+
+		fmt.Println("cm")
+		fmt.Println("	<FUNCTION>")
+		fmt.Println("	- add <PARAMS>: name. | Example: client cm add cine1")
+		fmt.Println("	- delete <PARAMS>: name. | Example: client cm delete cine1")
+		fmt.Println("	- get: | Example: client cm get")
+		fmt.Println("")
+
+		fmt.Println("mv")
+		fmt.Println("	<FUNCTION>")
+		fmt.Println("	- add <PARAMS>: title. | Example: client mv add movie1")
+		fmt.Println("	- delete <PARAMS>: title. | Example: client mv delete movie1")
+		fmt.Println("	- get: | Example: client mv get")
+		fmt.Println("")
+
+		fmt.Println("rv")
+		fmt.Println("	<FUNCTION>")
+		fmt.Println("	- request <PARAMS>: user showingID seats. | Example: client rv request user1 2 4")
+		fmt.Println("    Requests a reservation.")
+		fmt.Println("  - book <PARAMS>: reservationID. | Example: client rv book 1")
+		fmt.Println("    Books a reservation.")
+		fmt.Println("  - delete <PARAMS>: reservationID. | Example: client rv delete 1")
+		fmt.Println("  - get: | Example: client reservation get")
+		fmt.Println("")
+
+		fmt.Println("sw")
+		fmt.Println("	<FUNCTION>")
+		fmt.Println("	- add <PARAMS>: movie cm. | Example: client sw add movie1 cine1")
+		fmt.Println("	- delete <PARAMS>: showingID. | Example: client sw delete 4")
+		fmt.Println("	- get: | Example: client sw get")
+		fmt.Println("")
+
+		fmt.Println("fill")
+		fmt.Println("  - Fills services with some data. | Example: client fill")
 		return
 	}
 
@@ -70,37 +81,64 @@ func main() {
 
 	firstFlag := flag.Arg(0)
 	switch firstFlag {
-	case "cm":
-		cm = proto.NewCinemahallService(("cinemahall"), service.Client())
+	case "us":
+		us = proto.NewUserService("user", service.Client())
 		secondFlag := flag.Arg(1)
 		switch secondFlag {
 		case "add":
-			cm.AddCinemahall(context.TODO(), &proto.CinemahallRequest{
-				Name:            flag.Arg(2),
-				SeatRows:        stringToInt(flag.Arg(3)),
-				SeatRowCapacity: stringToInt(flag.Arg(4)),
-			})
-		case "delete":
-			cm.DeleteCinemahall(context.TODO(), &proto.CinemahallRequest{
+			// Füge neuen Benutzer hinzu
+			us.GetUsers(context.TODO(), &proto.Request{})
+			fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
 				Name: flag.Arg(2),
-			})
+			}))
+		case "delete":
+			// Lösche Benutzer
+			us.GetUsers(context.TODO(), &proto.Request{})
+			information(us.DeleteUser(context.TODO(), &proto.UserRequest{
+				Name: flag.Arg(2),
+			}))
 		case "get":
-			cm.GetCinemahalls(context.TODO(), &proto.Request{})
+			// Gebe alle Benutzer aus
+			us.GetUsers(context.TODO(), &proto.Request{})
+			informationUser(us.GetUsers(context.TODO(), &proto.Request{}))
 		}
 	case "mv":
 		mv = proto.NewMovieService("movie", service.Client())
 		secondFlag := flag.Arg(1)
 		switch secondFlag {
 		case "add":
-			mv.AddMovie(context.TODO(), &proto.MovieRequest{
+			mv.GetMovies(context.TODO(), &proto.Request{})
+			information(mv.AddMovie(context.TODO(), &proto.MovieRequest{
 				MovieTitle: flag.Arg(2),
-			})
+			}))
 		case "delete":
-			mv.DeleteMovie(context.TODO(), &proto.MovieRequest{
+			mv.GetMovies(context.TODO(), &proto.Request{})
+			information(mv.DeleteMovie(context.TODO(), &proto.MovieRequest{
 				MovieTitle: flag.Arg(2),
-			})
+			}))
 		case "get":
 			mv.GetMovies(context.TODO(), &proto.Request{})
+			informationMovie(mv.GetMovies(context.TODO(), &proto.Request{}))
+		}
+	case "cm":
+		cm = proto.NewCinemahallService(("cinemahall"), service.Client())
+		secondFlag := flag.Arg(1)
+		switch secondFlag {
+		case "add":
+			cm.GetCinemahalls(context.TODO(), &proto.Request{})
+			information(cm.AddCinemahall(context.TODO(), &proto.CinemahallRequest{
+				Name:            flag.Arg(2),
+				SeatRows:        stringToInt(flag.Arg(3)),
+				SeatRowCapacity: stringToInt(flag.Arg(4)),
+			}))
+		case "delete":
+			cm.GetCinemahalls(context.TODO(), &proto.Request{})
+			information(cm.DeleteCinemahall(context.TODO(), &proto.CinemahallRequest{
+				Name: flag.Arg(2),
+			}))
+		case "get":
+			cm.GetCinemahalls(context.TODO(), &proto.Request{})
+			informationCinemahall(cm.GetCinemahalls(context.TODO(), &proto.Request{}))
 		}
 	case "rv":
 		rv = proto.NewReservationService("reservation", service.Client())
@@ -139,46 +177,40 @@ func main() {
 		case "get":
 			sw.GetShows(context.TODO(), &proto.Request{})
 		}
-	case "us":
-		us = proto.NewUserService("user", service.Client())
-		secondFlag := flag.Arg(1)
-		switch secondFlag {
-		case "add":
-			// Füge neuen Benutzer hinzu
-			us.GetUsers(context.TODO(), &proto.Request{})
-			fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
-				Name: flag.Arg(2),
-			}))
-		case "delete":
-			// Lösche Benutzer
-			us.GetUsers(context.TODO(), &proto.Request{})
-			information(us.DeleteUser(context.TODO(), &proto.UserRequest{
-				Name: flag.Arg(2),
-			}))
-		case "get":
-			// Gebe alle Benutzer aus
-			us.GetUsers(context.TODO(), &proto.Request{})
-			us.GetUsers(context.TODO(), &proto.Request{})
-		}
+
 	case "fill":
 		us = proto.NewUserService("user", service.Client())
 		mv = proto.NewMovieService("movie", service.Client())
+		cm = proto.NewCinemahallService("cinemahall", service.Client())
 
 		us.GetUsers(context.TODO(), &proto.Request{})
 		information(us.AddUser(context.TODO(), &proto.UserRequest{
-			Name: "Salih",
+			Name: "Benutzer1",
 		}))
 		information(us.AddUser(context.TODO(), &proto.UserRequest{
-			Name: "Fatih",
+			Name: "Benutzer2",
 		}))
 		information(us.AddUser(context.TODO(), &proto.UserRequest{
-			Name: "Fatih",
+			Name: "Benutzer3",
+		}))
+		information(us.AddUser(context.TODO(), &proto.UserRequest{
+			Name: "Benutzer4",
 		}))
 		information(mv.AddMovie(context.TODO(), &proto.MovieRequest{
 			MovieTitle: "Spiderman",
 		}))
 		information(mv.AddMovie(context.TODO(), &proto.MovieRequest{
-			MovieTitle: "Spiderman",
+			MovieTitle: "Batman",
+		}))
+		information(cm.AddCinemahall(context.TODO(), &proto.CinemahallRequest{
+			Name:            "Kino1",
+			SeatRows:        10,
+			SeatRowCapacity: 10,
+		}))
+		information(cm.AddCinemahall(context.TODO(), &proto.CinemahallRequest{
+			Name:            "Kino2",
+			SeatRows:        15,
+			SeatRowCapacity: 15,
 		}))
 	default:
 		// Falls falsch benutzt, Usagemöglichkeiten anzeigen
@@ -187,9 +219,27 @@ func main() {
 	}
 }
 
-func information(res *proto.Response, err error) {
-	if err != nil {
-		fmt.Println(err)
+func informationCinemahall(res *proto.CinemahallResponse, error error) {
+	if error == nil {
+		fmt.Println(res)
+	}
+}
+
+func informationUser(res *proto.UserResponse, error error) {
+	if error == nil {
+		fmt.Println(res)
+	}
+}
+
+func informationMovie(res *proto.MovieResponse, error error) {
+	if error == nil {
+		fmt.Println(res)
+	}
+}
+
+func information(res *proto.Response, error error) {
+	if error != nil {
+		fmt.Println(error)
 		return
 	}
 

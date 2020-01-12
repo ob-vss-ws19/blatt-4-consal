@@ -19,7 +19,7 @@ func (us *User) AddUser(ctx context.Context, req *proto.UserRequest, rsp *proto.
 	}
 	// kontrollieren ob Benutzer schon existiert.
 	if _, exists := us.Users[req.Name]; exists {
-		rsp.Success = false
+		rsp.Success = true
 		rsp.Message = fmt.Sprintf("#ADD_USER_FAIL: User '%s' does exist already.", req.Name)
 		return nil
 	}
@@ -32,7 +32,7 @@ func (us *User) AddUser(ctx context.Context, req *proto.UserRequest, rsp *proto.
 
 func (us *User) DeleteUser(context context.Context, req *proto.UserRequest, res *proto.Response) error {
 	if _, exists := us.Users[req.Name]; !exists {
-		res.Success = false
+		res.Success = true
 		res.Message = fmt.Sprintf("#DELETE_USER_FAIL: User %s doesn't exist yet", req.Name)
 		return nil
 	}
@@ -46,7 +46,6 @@ func (us *User) DeleteUser(context context.Context, req *proto.UserRequest, res 
 func deleteCorrespondingReservations(userName string) {
 	var client client.Client
 	reservationService := proto.NewReservationService("reservation", client)
-
 	res, err := reservationService.GetReservations(context.TODO(), &proto.Request{})
 	if err != nil {
 		fmt.Printf("#DELETE_USER_ERROR: %s", err)
@@ -72,12 +71,11 @@ func (us *User) GetUsers(context context.Context, req *proto.Request, res *proto
 }
 
 //Start Service for user class
-func StartUserService(context context.Context) {
+func StartUserService(context context.Context, port int64) {
 	//Create a new Service. Add name address and context
-	var port int64
-	port = 3000
 	service := micro.NewService(
 		micro.Name("user"),
+		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
 		micro.Context(context),
 	)
