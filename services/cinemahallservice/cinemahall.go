@@ -79,7 +79,7 @@ func (cm *Cinemahall) GetCinemahalls(ctx context.Context, req *proto.Request, rs
 }
 
 //Start Service for movie class
-func StartCinemaService() {
+func StartCinemaService(context context.Context) {
 	//Create a new Service. Include name, version, address and context
 	var port int32 = 8081
 	service := micro.NewService(

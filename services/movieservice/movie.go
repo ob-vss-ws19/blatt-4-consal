@@ -11,19 +11,18 @@ import (
 type Movie struct {
 }
 
-//initialize a map using built in function make
+// initialize a map using built in function make
 var movies = make(map[string]bool)
 
-func (mv *Movie) AddMovie(ctx context.Context, req *proto.MovieRequest, rsp *proto.Response) error {
-	if _, ok := movies[req.MovieTitle]; ok {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Movie %s does already exist", req.MovieTitle)
+func (mv *Movie) AddMovie(context context.Context, req *proto.MovieRequest, res *proto.Response) error {
+	if _, exists := movies[req.MovieTitle]; exists {
+		res.Success = false
+		res.Message = fmt.Sprintf("#ADD_MOVIE_FAIL: Movie %s does exist", req.MovieTitle)
 		return nil
 	}
-
-	movies[req.MovieTitle] = true //value type is not specified
-	rsp.Success = true
-	rsp.Message = fmt.Sprintf("New Movie %s added", req.MovieTitle)
+	movies[req.MovieTitle] = true // value type is not specified
+	res.Success = true
+	res.Message = fmt.Sprintf("#ADD_MOVIE: Movie %s added", req.MovieTitle)
 	return nil
 }
 
@@ -31,51 +30,51 @@ func deleteCorrespondingShows(movieTitle string) {
 	var client client.Client
 	showService := proto.NewShowService("show", client)
 
-	rsp, err := showService.GetShows(context.TODO(), &proto.Request{})
+	res, err := showService.GetShows(context.TODO(), &proto.Request{})
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		fmt.Printf("#DELETE_MOVIE_ERROR: %s", err)
 	}
-	//Iterate through DATA struc (shows) and call delete show
-	for _, v := range rsp.Value {
-		if movieTitle == v.Movie {
-			_, err := showService.DeleteShow(context.TODO(), &proto.ShowRequest{Id: v.Id})
+	// Iterate through DATA struct (shows) and call delete show
+	for _, show := range res.Value {
+		if movieTitle == show.Movie {
+			_, err := showService.DeleteShow(context.TODO(), &proto.ShowRequest{Id: show.Id})
 			if err != nil {
-				fmt.Printf("Error: %s", err)
+				fmt.Printf("#DELETE_USER_ERROR: %s", err)
 			}
 		}
 	}
 }
-func (mv *Movie) DeleteMovie(ctx context.Context, req *proto.MovieRequest, rsp *proto.Response) error {
-	if _, ok := movies[req.MovieTitle]; !ok {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Movie %s does not exist0", req.MovieTitle)
+func (mv *Movie) DeleteMovie(ctx context.Context, req *proto.MovieRequest, res *proto.Response) error {
+	if _, exists := movies[req.MovieTitle]; !exists {
+		res.Success = false
+		res.Message = fmt.Sprintf("#DELETE_MOVIE_FAIL: Movie %s doesn't exist yet", req.MovieTitle)
 		return nil
 	}
 	//create Show service client and delete corresponding shows
 	deleteCorrespondingShows(req.MovieTitle)
 	delete(movies, req.MovieTitle)
-	rsp.Success = true
-	rsp.Message = fmt.Sprintf("Movie %s was deleted", req.MovieTitle)
+	res.Success = true
+	res.Message = fmt.Sprintf("#DELETE_MOVIE: User %s deleted successfully", req.MovieTitle)
 	return nil
 }
 
-func (mv *Movie) GetMovies(ctx context.Context, req *proto.Request, rsp *proto.MovieResponse) error {
-	for k := range movies {
+func (mv *Movie) GetMovies(context context.Context, req *proto.Request, res *proto.MovieResponse) error {
+	for movie := range movies {
 		//only key used. Value remains unused
-		rsp.Value = append(rsp.Value, &proto.MovieRequest{MovieTitle: k})
+		res.Value = append(res.Value, &proto.MovieRequest{MovieTitle: movie})
 	}
 	return nil
 }
 
 //Start Service for movie class
-func StartMovieService() {
+func StartMovieService(context context.Context) {
 	//Create a new Service. Add name address and context
 	var port int32 = 8082
 	service := micro.NewService(
 		micro.Name("movie"),
 		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
-		micro.Context(nil), //needed
+		micro.Context(context), //needed
 	)
 	// Init will parse the command line flags
 	service.Init()

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	cm proto.CinemaService
+	cm proto.CinemahallService
 	mv proto.MovieService
 	rv proto.ReservationService
 	sw proto.ShowService
@@ -66,26 +66,26 @@ func main() {
 	}
 
 	service := micro.NewService(micro.Name("client"))
-	service.Init(micro.Address(fmt.Sprintf(": #{8091}")))
+	service.Init(micro.Address(fmt.Sprintf(":%v", 8091)))
 
 	firstFlag := flag.Arg(0)
 	switch firstFlag {
 	case "cm":
-		cm = proto.NewCinemaService(("cinema"), service.Client())
+		cm = proto.NewCinemahallService(("cinemahall"), service.Client())
 		secondFlag := flag.Arg(1)
 		switch secondFlag {
 		case "add":
-			cm.AddCinema(context.TODO(), &proto.CinemaRequest{
+			cm.AddCinemahall(context.TODO(), &proto.CinemahallRequest{
 				Name:            flag.Arg(2),
 				SeatRows:        stringToInt(flag.Arg(3)),
 				SeatRowCapacity: stringToInt(flag.Arg(4)),
 			})
 		case "delete":
-			cm.DeleteCinema(context.TODO(), &proto.CinemaRequest{
+			cm.DeleteCinemahall(context.TODO(), &proto.CinemahallRequest{
 				Name: flag.Arg(2),
 			})
 		case "get":
-			cm.GetCinemas(context.TODO(), &proto.Request{})
+			cm.GetCinemahalls(context.TODO(), &proto.Request{})
 		}
 	case "mv":
 		mv = proto.NewMovieService("movie", service.Client())
@@ -107,18 +107,18 @@ func main() {
 		secondFlag := flag.Arg(1)
 		switch secondFlag {
 		case "check":
-			rv.CheckReservation(context.TODO(), &proto.ReservationRequest{
-				User:    flag.Arg(2),
-				Showing: stringToInt(flag.Arg(3)),
-				Seats:   stringToInt(flag.Arg(4)),
+			rv.ReservationInquiry(context.TODO(), &proto.ReservationRequest{
+				UserName: flag.Arg(2),
+				Show:     stringToInt(flag.Arg(3)),
+				Seats:    stringToInt(flag.Arg(4)),
 			})
 		case "make":
 			rv.MakeReservation(context.TODO(), &proto.ReservationRequest{
-				ReservationID: stringToInt(flag.Arg(2)),
+				ReservationId: stringToInt(flag.Arg(2)),
 			})
 		case "delete":
 			rv.DeleteReservation(context.TODO(), &proto.ReservationRequest{
-				ReservationID: stringToInt(flag.Arg(2)),
+				ReservationId: stringToInt(flag.Arg(2)),
 			})
 		case "get":
 			rv.GetReservations(context.TODO(), &proto.Request{})
@@ -145,26 +145,49 @@ func main() {
 		switch secondFlag {
 		case "add":
 			// Füge neuen Benutzer hinzu
-			us.AddUser(context.TODO(), &proto.UserRequest{
+			us.GetUsers(context.TODO(), &proto.Request{})
+			fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
 				Name: flag.Arg(2),
-			})
+			}))
 		case "delete":
 			// Lösche Benutzer
-			us.DeleteUser(context.TODO(), &proto.UserRequest{
+			us.GetUsers(context.TODO(), &proto.Request{})
+			information(us.DeleteUser(context.TODO(), &proto.UserRequest{
 				Name: flag.Arg(2),
-			})
+			}))
 		case "get":
 			// Gebe alle Benutzer aus
 			us.GetUsers(context.TODO(), &proto.Request{})
+			us.GetUsers(context.TODO(), &proto.Request{})
 		}
 	case "fill":
+		us = proto.NewUserService("user", service.Client())
+		mv = proto.NewMovieService("movie", service.Client())
 
+		us.GetUsers(context.TODO(), &proto.Request{})
+		fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
+			Name: "Salih",
+		}))
+		fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
+			Name: "Fatih",
+		}))
+		fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
+			Name: "Fatih",
+		}))
+		fmt.Println(mv.AddMovie(context.TODO(), &proto.MovieRequest{
+			MovieTitle: "Spiderman",
+		}))
 	default:
 		// Falls falsch benutzt, Usagemöglichkeiten anzeigen
 		flag.Usage()
 		return
 	}
+}
 
+func information(res *proto.Response, err error) {
+	if res.Success {
+		fmt.Printf("# %s\n", res.Message)
+	}
 }
 
 func stringToInt(toParse string) int32 {
