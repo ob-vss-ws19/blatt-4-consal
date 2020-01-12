@@ -3,6 +3,7 @@ package main
 import (
 	"blatt-4-consal/services/cinemahallservice"
 	"blatt-4-consal/services/movieservice"
+	"blatt-4-consal/services/showservice"
 	"blatt-4-consal/services/userservice"
 	"context"
 	"time"
@@ -12,18 +13,18 @@ import (
 )
 
 func main() {
-	//start services asynchronously for cinema, movie, reservation, show and user
+	// start services asynchronously for user, movie, cinemahall, show and reservationservice
 	go userservice.StartUserService(context.TODO(), 3000)
 	sleep()
 	go movieservice.StartMovieService(context.TODO(), 3001)
 	sleep()
-	cinemahallservice.StartCinemaService(context.TODO(), 3002)
-
-	// go reservationservice.StartReservationService()
-	//showservice.StartReservationService()
-	// time.Sleep(300*time.Millisecond)
+	go cinemahallservice.StartCinemaService(context.TODO(), 3002)
+	sleep()
+	showservice.StartReservationService(context.TODO(), 3003)
+	// sleep()
+	// reservationservice.StartReservationService(context.TODO(), 3004)
 }
 
 func sleep() {
-	time.Sleep(300 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 }

@@ -25,32 +25,24 @@ func (cm *Cinemahall) AddCinemahall(ctx context.Context, req *proto.CinemahallRe
 	// A two-value assignment tests for the existence of a key
 	//if ok true -> key exists in the map
 	if _, exists := cinemas[req.Name]; exists {
-		res.Success = true
-		res.Message = fmt.Sprintf("#ADD_CINE_FAIL: Cinemahall %s does already exist", req.Name)
-		return nil
+		return makeResponse(res, fmt.Sprintf("#ADD_CINE_FAIL: Cinemahall %s does already exist", req.Name))
 	}
 	//Cinema doesn't exist. Add new one
 	cinemas[req.Name] = &CinemahallRequest{SeatRows: req.SeatRows, SeatRowsCapacity: req.SeatRowCapacity}
-	res.Success = true
-	res.Message = fmt.Sprintf("#ADD_CINE: Movie %s added", req.Name)
-	return nil
+	return makeResponse(res, fmt.Sprintf("#ADD_CINE: Movie %s added", req.Name))
 }
 
 func (cm *Cinemahall) DeleteCinemahall(ctx context.Context, req *proto.CinemahallRequest, res *proto.Response) error {
 	if _, exists := cinemas[req.Name]; !exists {
-		res.Success = true
-		res.Message = fmt.Sprintf("#DELETE_CINE_FAIL: Cinema %s doesn't exist yet", req.Name)
-		return nil
+		return makeResponse(res, fmt.Sprintf("#DELETE_CINE_FAIL: Cinema %s doesn't exist yet", req.Name))
 	}
 	//Cinema does exist
 	//create Show service client and delete corresponding shows
 	//delete cinemahall from map
 
-	//deleteCorrespondingShows(req.Name)
+	deleteCorrespondingShows(req.Name)
 	delete(cinemas, req.Name)
-	res.Success = true
-	res.Message = fmt.Sprintf("#DELETE_MOVIE: User %s deleted successfully", req.Name)
-	return nil
+	return makeResponse(res, fmt.Sprintf("#DELETE_MOVIE: User %s deleted successfully", req.Name))
 }
 
 func deleteCorrespondingShows(cinemahallName string) {
@@ -76,6 +68,12 @@ func (cm *Cinemahall) GetCinemahalls(ctx context.Context, req *proto.Request, rs
 	for k, v := range cinemas {
 		rsp.Value = append(rsp.Value, &proto.CinemahallRequest{Name: k, SeatRowCapacity: v.SeatRowsCapacity, SeatRows: v.SeatRows})
 	}
+	return nil
+}
+
+func makeResponse(res *proto.Response, message string) error {
+	res.Success = true
+	res.Message = message
 	return nil
 }
 

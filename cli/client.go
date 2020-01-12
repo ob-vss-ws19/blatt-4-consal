@@ -166,22 +166,26 @@ func main() {
 		secondFlag := flag.Arg(1)
 		switch secondFlag {
 		case "add":
-			sw.AddShow(context.TODO(), &proto.ShowRequest{
+			sw.GetShows(context.TODO(), &proto.Request{})
+			information(sw.AddShow(context.TODO(), &proto.ShowRequest{
 				Movie:      flag.Arg(2),
 				CinemaHall: flag.Arg(3),
-			})
+			}))
 		case "delete":
-			sw.DeleteShow(context.TODO(), &proto.ShowRequest{
+			sw.GetShows(context.TODO(), &proto.Request{})
+			information(sw.DeleteShow(context.TODO(), &proto.ShowRequest{
 				Id: stringToInt(flag.Arg(2)),
-			})
+			}))
 		case "get":
 			sw.GetShows(context.TODO(), &proto.Request{})
+			informationShow(sw.GetShows(context.TODO(), &proto.Request{}))
 		}
 
 	case "fill":
 		us = proto.NewUserService("user", service.Client())
 		mv = proto.NewMovieService("movie", service.Client())
 		cm = proto.NewCinemahallService("cinemahall", service.Client())
+		sw = proto.NewShowService("show", service.Client())
 
 		us.GetUsers(context.TODO(), &proto.Request{})
 		information(us.AddUser(context.TODO(), &proto.UserRequest{
@@ -212,10 +216,25 @@ func main() {
 			SeatRows:        15,
 			SeatRowCapacity: 15,
 		}))
+		information(sw.AddShow(context.TODO(), &proto.ShowRequest{
+			CinemaHall: "Kino1",
+			Movie:      "Spiderman",
+		}))
+		information(sw.AddShow(context.TODO(), &proto.ShowRequest{
+			CinemaHall: "Kino2",
+			Movie:      "Batman",
+		}))
+
 	default:
 		// Falls falsch benutzt, Usagemöglichkeiten anzeigen
 		flag.Usage()
 		return
+	}
+}
+
+func informationShow(res *proto.ShowResponse, error error) {
+	if error == nil {
+		fmt.Println(res)
 	}
 }
 

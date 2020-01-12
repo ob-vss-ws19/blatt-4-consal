@@ -14,30 +14,21 @@ type Movie struct {
 var movies = make(map[string]bool)
 
 func (mv *Movie) AddMovie(context context.Context, req *proto.MovieRequest, res *proto.Response) error {
-
 	if _, exists := movies[req.MovieTitle]; exists {
-		res.Success = true
-		res.Message = fmt.Sprintf("#ADD_MOVIE_FAIL: Movie %s does exist", req.MovieTitle)
-		return nil
+		return makeResponse(res, fmt.Sprintf("#ADD_MOVIE_FAIL: Movie %s does exist", req.MovieTitle))
 	}
 	movies[req.MovieTitle] = true // value type is not specified
-	res.Success = true
-	res.Message = fmt.Sprintf("#ADD_MOVIE: Movie %s added", req.MovieTitle)
-	return nil
+	return makeResponse(res, fmt.Sprintf("#ADD_MOVIE: Movie %s added", req.MovieTitle))
 }
 
 func (mv *Movie) DeleteMovie(ctx context.Context, req *proto.MovieRequest, res *proto.Response) error {
 	if _, exists := movies[req.MovieTitle]; !exists {
-		res.Success = true
-		res.Message = fmt.Sprintf("#DELETE_MOVIE_FAIL: Movie %s doesn't exist yet", req.MovieTitle)
-		return nil
+		return makeResponse(res, fmt.Sprintf("#DELETE_MOVIE_FAIL: Movie %s doesn't exist yet", req.MovieTitle))
 	}
 	//create Show service client and delete corresponding shows
 	deleteCorrespondingShows(req.MovieTitle)
 	delete(movies, req.MovieTitle)
-	res.Success = true
-	res.Message = fmt.Sprintf("#DELETE_MOVIE: User %s deleted successfully", req.MovieTitle)
-	return nil
+	return makeResponse(res, fmt.Sprintf("#DELETE_MOVIE: User %s deleted successfully", req.MovieTitle))
 }
 
 func deleteCorrespondingShows(movieTitle string) {
@@ -64,6 +55,12 @@ func (mv *Movie) GetMovies(context context.Context, req *proto.Request, res *pro
 		//only key used. Value remains unused
 		res.Value = append(res.Value, &proto.MovieRequest{MovieTitle: movie})
 	}
+	return nil
+}
+
+func makeResponse(res *proto.Response, message string) error {
+	res.Success = true
+	res.Message = message
 	return nil
 }
 

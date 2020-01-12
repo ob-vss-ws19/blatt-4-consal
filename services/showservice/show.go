@@ -9,7 +9,6 @@ import (
 )
 
 type Show struct {
-	Id int32
 }
 
 type ShowRequest struct {
@@ -17,61 +16,31 @@ type ShowRequest struct {
 	Cinemahall string
 }
 
-var shows = make(map[int32]*ShowRequest)
+var Shows = make(map[int32]*ShowRequest)
+var Id int32 = 1
 
-func doesMovieExist(movieTitle string) bool {
-	var client client.Client
-	movieService := proto.NewMovieService("movie", client)
-
-	rsp, err := movieService.GetMovies(context.TODO(), &proto.Request{})
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return false
-	}
-	//user does exist
-	for _, v := range rsp.Value {
-		if movieTitle == v.MovieTitle {
-			return true
-		}
-	}
-	return false
-}
-
-func doesCinemahallExist(cinemahall string) bool {
-	var client client.Client
-	cinemahallService := proto.NewCinemahallService("cinemahall", client)
-
-	rsp, err := cinemahallService.GetCinemahalls(context.TODO(), &proto.Request{})
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return false
-	}
-	//Cinemahall does exist
-	for _, v := range rsp.Value {
-		if cinemahall == v.Name {
-			return true
-		}
-	}
-	return false
-}
-
-func (sw *Show) AddShow(ctx context.Context, req *proto.ShowRequest, rsp *proto.Response) error {
+func (*Show) AddShow(context context.Context, req *proto.ShowRequest, res *proto.Response) error {
 	if !doesMovieExist(req.Movie) {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Movie %s does not exist", req.Movie)
-		return nil
+		return makeResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Movie %s doesn't exist yet", req.Movie))
 	}
 	if !doesCinemahallExist(req.CinemaHall) {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Cinemahall %s does not exist", req.CinemaHall)
-		return nil
+		return makeResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Cinemahall %s doesn't exist yet", req.Movie))
 	}
-
-	shows[sw.Id] = &ShowRequest{Movie: req.Movie, Cinemahall: req.CinemaHall}
-	rsp.Success = true
-	rsp.Message = fmt.Sprintf("New Show with ID %s in Cinema %s with Movie Title %s added", req.Id, req.CinemaHall, req.Movie)
-	sw.Id++
+	Shows[Id] = &ShowRequest{Movie: req.Movie, Cinemahall: req.CinemaHall}
+	makeResponse(res, fmt.Sprintf("#SHOW_ADD: New Show with ID %d in Cinema %s with Movie Title %s added", Id, req.CinemaHall, req.Movie))
+	Id++
 	return nil
+}
+
+func (*Show) DeleteShow(context context.Context, req *proto.ShowRequest, res *proto.Response) error {
+	if _, exists := Shows[req.Id]; !exists {
+		return makeResponse(res, fmt.Sprintf("#SHOW_DELETE_FAIL: Show %d does not exist", req.Id))
+	}
+	// create Reservation service client and delete corresponding Reservations
+	// delete cinemahall from map
+	// deleteCorrespondingReservations(req.Id)
+	delete(Shows, req.Id)
+	return makeResponse(res, fmt.Sprintf("#DELETE_MOVIE: Show with id %d deleted successfully", req.Id))
 }
 
 func deleteCorrespondingReservations(showId int32) {
@@ -93,37 +62,61 @@ func deleteCorrespondingReservations(showId int32) {
 	}
 }
 
-func (sw *Show) DeleteShow(ctx context.Context, req *proto.ShowRequest, rsp *proto.Response) error {
-	if _, ok := shows[req.Id]; !ok {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Show %s does not exist", req.Id)
-		return nil
+func (*Show) GetShows(context context.Context, req *proto.Request, rsp *proto.ShowResponse) error {
+	for id, v := range Shows {
+		rsp.Value = append(rsp.Value, &proto.ShowRequest{Id: id, CinemaHall: v.Cinemahall, Movie: v.Movie})
 	}
-	//create Reservation service client and delete corresponding Reservations
-	deleteCorrespondingReservations(req.Id)
-	//delete cinemahall from map
-	delete(shows, req.Id)
-	rsp.Success = true
-	rsp.Message = fmt.Sprintf("Show with id: %s was deleted", req.Id)
 	return nil
 }
 
-func (sw *Show) GetShows(ctx context.Context, req *proto.Request, rsp *proto.ShowResponse) error {
-	for k, v := range shows {
-		rsp.Value = append(rsp.Value, &proto.ShowRequest{Id: k, CinemaHall: v.Cinemahall, Movie: v.Movie})
+func doesCinemahallExist(cinemahall string) bool {
+	var client client.Client
+	cinemahallService := proto.NewCinemahallService("cinemahall", client)
+	res, err := cinemahallService.GetCinemahalls(context.TODO(), &proto.Request{})
+	if err != nil {
+		fmt.Printf("#SHOW_FIND_CINE: Error: %s", err)
+		return false
 	}
+	for _, cinema := range res.Value {
+		if cinemahall == cinema.Name {
+			//Cinemahall does exist
+			return true
+		}
+	}
+	return false
+}
+
+func doesMovieExist(movieTitle string) bool {
+	var client client.Client
+	movieService := proto.NewMovieService("movie", client)
+	res, err := movieService.GetMovies(context.TODO(), &proto.Request{})
+	if err != nil {
+		fmt.Printf("Error: %s", err)
+		return false
+	}
+	for _, movie := range res.Value {
+		if movieTitle == movie.MovieTitle {
+			// Movie does exists
+			return true
+		}
+	}
+	return false
+}
+
+func makeResponse(res *proto.Response, message string) error {
+	res.Success = true
+	res.Message = message
 	return nil
 }
 
 //Start Service for Show class
-func StartReservationService() {
+func StartReservationService(context context.Context, port int64) {
 	//Create a new Service. Add name address and context
-	var port int32 = 8084
 	service := micro.NewService(
 		micro.Name("show"),
 		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
-		micro.Context(nil),
+		micro.Context(context),
 	)
 	// Init will parse the command line flags
 	service.Init()

@@ -104,9 +104,8 @@ func (rv *Reservation) GetReservations(ctx context.Context, req *proto.Request, 
 }
 
 //Start Service for movie class
-func StartReservationService(context context.Context) {
+func StartReservationService(context context.Context, port int64) {
 	//Create a new Service. Add name address and context
-	var port int32 = 8083
 	service := micro.NewService(
 		micro.Name("reservation"),
 		micro.Version("latest"),
