@@ -42,7 +42,7 @@ func doesUserExists(userName string) bool {
 			return true
 		}
 	}
-	return false;
+	return false
 }
 
 func doesShowExist(showId int32) bool {
@@ -59,7 +59,7 @@ func doesShowExist(showId int32) bool {
 			return true
 		}
 	}
-	return false;
+	return false
 }
 
 func (rv *Reservation) MakeReservation(ctx context.Context, req *proto.ReservationRequest, rsp *proto.Response) error {
@@ -79,7 +79,7 @@ func (rv *Reservation) MakeReservation(ctx context.Context, req *proto.Reservati
 
 	//Add new reservation
 	if _, ok := reservations[req.ReservationId]; ok {
-		rsp.Success = false;
+		rsp.Success = false
 		rsp.Message = fmt.Sprintf("Reservation with id: %s does already exist", req.ReservationId)
 		return nil
 	}
@@ -104,14 +104,14 @@ func (rv *Reservation) GetReservations(ctx context.Context, req *proto.Request, 
 }
 
 //Start Service for movie class
-func StartReservationService() {
+func StartReservationService(context context.Context) {
 	//Create a new Service. Add name address and context
 	var port int32 = 8083
 	service := micro.NewService(
 		micro.Name("reservation"),
 		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
-		micro.Context(nil), //needed
+		micro.Context(context), //needed
 	)
 	// Init will parse the command line flags
 	service.Init()

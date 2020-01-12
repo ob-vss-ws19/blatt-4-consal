@@ -9,18 +9,16 @@ import (
 )
 
 type Movie struct {
+	movies map[string]bool
 }
 
-// initialize a map using built in function make
-var movies = make(map[string]bool)
-
 func (mv *Movie) AddMovie(context context.Context, req *proto.MovieRequest, res *proto.Response) error {
-	if _, exists := movies[req.MovieTitle]; exists {
+	if _, exists := mv.movies[req.MovieTitle]; exists {
 		res.Success = false
 		res.Message = fmt.Sprintf("#ADD_MOVIE_FAIL: Movie %s does exist", req.MovieTitle)
 		return nil
 	}
-	movies[req.MovieTitle] = true // value type is not specified
+	mv.movies[req.MovieTitle] = true // value type is not specified
 	res.Success = true
 	res.Message = fmt.Sprintf("#ADD_MOVIE: Movie %s added", req.MovieTitle)
 	return nil
@@ -45,21 +43,21 @@ func deleteCorrespondingShows(movieTitle string) {
 	}
 }
 func (mv *Movie) DeleteMovie(ctx context.Context, req *proto.MovieRequest, res *proto.Response) error {
-	if _, exists := movies[req.MovieTitle]; !exists {
+	if _, exists := mv.movies[req.MovieTitle]; !exists {
 		res.Success = false
 		res.Message = fmt.Sprintf("#DELETE_MOVIE_FAIL: Movie %s doesn't exist yet", req.MovieTitle)
 		return nil
 	}
 	//create Show service client and delete corresponding shows
 	deleteCorrespondingShows(req.MovieTitle)
-	delete(movies, req.MovieTitle)
+	delete(mv.movies, req.MovieTitle)
 	res.Success = true
 	res.Message = fmt.Sprintf("#DELETE_MOVIE: User %s deleted successfully", req.MovieTitle)
 	return nil
 }
 
 func (mv *Movie) GetMovies(context context.Context, req *proto.Request, res *proto.MovieResponse) error {
-	for movie := range movies {
+	for movie := range mv.movies {
 		//only key used. Value remains unused
 		res.Value = append(res.Value, &proto.MovieRequest{MovieTitle: movie})
 	}
@@ -69,10 +67,10 @@ func (mv *Movie) GetMovies(context context.Context, req *proto.Request, res *pro
 //Start Service for movie class
 func StartMovieService(context context.Context) {
 	//Create a new Service. Add name address and context
-	var port int32 = 8082
+	var port int64
+	port = 3001
 	service := micro.NewService(
 		micro.Name("movie"),
-		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
 		micro.Context(context), //needed
 	)

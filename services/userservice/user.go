@@ -74,10 +74,10 @@ func (us *User) GetUsers(context context.Context, req *proto.Request, res *proto
 //Start Service for user class
 func StartUserService(context context.Context) {
 	//Create a new Service. Add name address and context
-	var port int32 = 8096
+	var port int64
+	port = 3000
 	service := micro.NewService(
 		micro.Name("user"),
-		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
 		micro.Context(context),
 	)

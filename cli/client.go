@@ -165,16 +165,19 @@ func main() {
 		mv = proto.NewMovieService("movie", service.Client())
 
 		us.GetUsers(context.TODO(), &proto.Request{})
-		fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
+		information(us.AddUser(context.TODO(), &proto.UserRequest{
 			Name: "Salih",
 		}))
-		fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
+		information(us.AddUser(context.TODO(), &proto.UserRequest{
 			Name: "Fatih",
 		}))
-		fmt.Println(us.AddUser(context.TODO(), &proto.UserRequest{
+		information(us.AddUser(context.TODO(), &proto.UserRequest{
 			Name: "Fatih",
 		}))
-		fmt.Println(mv.AddMovie(context.TODO(), &proto.MovieRequest{
+		information(mv.AddMovie(context.TODO(), &proto.MovieRequest{
+			MovieTitle: "Spiderman",
+		}))
+		information(mv.AddMovie(context.TODO(), &proto.MovieRequest{
 			MovieTitle: "Spiderman",
 		}))
 	default:
@@ -185,6 +188,11 @@ func main() {
 }
 
 func information(res *proto.Response, err error) {
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	if res.Success {
 		fmt.Printf("# %s\n", res.Message)
 	}
