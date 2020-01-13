@@ -47,21 +47,21 @@ func main() {
 		fmt.Println("	- get: | Example: client mv get")
 		fmt.Println("")
 
-		fmt.Println("rv")
-		fmt.Println("	<FUNCTION>")
-		fmt.Println("	- request <PARAMS>: user showingID seats. | Example: client rv request user1 2 4")
-		fmt.Println("    Requests a reservation.")
-		fmt.Println("  - book <PARAMS>: reservationID. | Example: client rv book 1")
-		fmt.Println("    Books a reservation.")
-		fmt.Println("  - delete <PARAMS>: reservationID. | Example: client rv delete 1")
-		fmt.Println("  - get: | Example: client reservation get")
-		fmt.Println("")
-
 		fmt.Println("sw")
 		fmt.Println("	<FUNCTION>")
 		fmt.Println("	- add <PARAMS>: movie cm. | Example: client sw add movie1 cine1")
 		fmt.Println("	- delete <PARAMS>: showingID. | Example: client sw delete 4")
 		fmt.Println("	- get: | Example: client sw get")
+		fmt.Println("")
+
+		fmt.Println("rv")
+		fmt.Println("	<FUNCTION>")
+		fmt.Println("	- check <PARAMS>: user showingID seats. | Example: client rv check user1 2 4")
+		fmt.Println("    Requests a reservation.")
+		fmt.Println("  - make <PARAMS>: reservationID. | Example: client rv make 1")
+		fmt.Println("    Books a reservation.")
+		fmt.Println("  - delete <PARAMS>: reservationID. | Example: client rv delete 1")
+		fmt.Println("  - get: | Example: client reservation get")
 		fmt.Println("")
 
 		fmt.Println("fill")
@@ -253,31 +253,41 @@ func main() {
 
 func informationReservation(res *proto.ReservationResponse, error error) {
 	if error == nil {
-		fmt.Println(res)
+		for _, value := range res.Value {
+			fmt.Println(value)
+		}
 	}
 }
 
 func informationShow(res *proto.ShowResponse, error error) {
 	if error == nil {
-		fmt.Println(res)
+		for _, value := range res.Value {
+			fmt.Println(value)
+		}
 	}
 }
 
 func informationCinemahall(res *proto.CinemahallResponse, error error) {
 	if error == nil {
-		fmt.Println(res)
+		for _, value := range res.Value {
+			fmt.Println(value)
+		}
 	}
 }
 
 func informationUser(res *proto.UserResponse, error error) {
 	if error == nil {
-		fmt.Println(res)
+		for _, value := range res.Value {
+			fmt.Println(value)
+		}
 	}
 }
 
 func informationMovie(res *proto.MovieResponse, error error) {
 	if error == nil {
-		fmt.Println(res)
+		for _, value := range res.Value {
+			fmt.Println(value)
+		}
 	}
 }
 
@@ -286,10 +296,7 @@ func information(res *proto.Response, error error) {
 		fmt.Println(error)
 		return
 	}
-
-	if res.Success {
-		fmt.Printf("# %s\n", res.Message)
-	}
+	fmt.Printf("%s\n", res.Message)
 }
 
 func stringToInt(toParse string) int32 {
