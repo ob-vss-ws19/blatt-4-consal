@@ -39,6 +39,12 @@ pipeline {
                 sh "echo build docker"
                 sh "docker-build-and-push -b ${BRANCH_NAME} -s client -f client.dockerfile"
                 sh "docker-build-and-push -b ${BRANCH_NAME} -s services -f services.dockerfile"
+                sh "docker-build-and-push -b ${BRANCH_NAME} -s userservice -f userservice/Dockerfile"
+                sh "docker-build-and-push -b ${BRANCH_NAME} -s movieservice -f movieservice/Dockerfile"
+                sh "docker-build-and-push -b ${BRANCH_NAME} -s cinemahallservice -f cinemahallservice/Dockerfile"
+                sh "docker-build-and-push -b ${BRANCH_NAME} -s showservice -f showservice/Dockerfile"
+                sh "docker-build-and-push -b ${BRANCH_NAME} -s reservationservice -f reservationservice/Dockerfile"
+
             }
         }
     }
