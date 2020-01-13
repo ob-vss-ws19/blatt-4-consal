@@ -34,12 +34,20 @@ func (rv *Reservation) ReservationInquiry(context context.Context, req *proto.Re
 		rv.reservations = make(map[int32]*ReservationRequest)
 	}
 	if !showExists(req.Show) {
-		return makeResponse(res, fmt.Sprintf("#RESERVATION_INQUIRY: Show %d does not exist yet.", req.Show))
+		return makeResponse(res, fmt.Sprintf("#CHECK_CINE_FAIL: Show %d does not exist yet.", req.Show))
 	}
 	if !userExists(req.UserName) {
-		return makeResponse(res, fmt.Sprintf("#RESERVATION_INQUIRY: User %s does not exist yet.", req.UserName))
+		return makeResponse(res, fmt.Sprintf("#CHECK_CINE_FAIL: User %s does not exist yet.", req.UserName))
+	}
+	// is there enough seats
+	availableSeats := availableSeats(req.Show, rv.reservations)
+	if availableSeats < req.Seats {
+		return makeResponse(res, fmt.Sprintf("#CHECK_CINE_FAIL: Only %d seats available.", availableSeats))
 	}
 
+	rv.reservations[rv.Id] = &ReservationRequest{seats: req.Seats, user: req.UserName, show: req.Show, reserved: false}
+	makeResponse(res, fmt.Sprintf("#CHECK_CINE: %d seats available for the show %d. Your reservation ID is %d.", req.Seats, req.Show, rv.Id))
+	rv.Id++
 	return nil
 }
 
@@ -85,6 +93,54 @@ func showExists(showId int32) bool {
 		}
 	}
 	return false
+}
+
+func availableSeats(showId int32, reservations map[int32]*ReservationRequest) int32 {
+	var numSeats int32 = -1
+	var client client.Client
+
+	// get all shows
+	tmpShow := proto.NewShowService("show", client)
+	res1, err := tmpShow.GetShows(context.TODO(), &proto.Request{})
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+
+	// get all cinema
+	tmpCinemahall := proto.NewCinemahallService("cinemahall", client)
+	res2, err := tmpCinemahall.GetCinemahalls(context.TODO(), &proto.Request{})
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+
+	var cinemahallName = ""
+
+	// find cinemahall of show
+	for _, show := range res1.Value {
+		if show.Id == showId {
+			cinemahallName = show.CinemaHall
+		}
+	}
+
+	// calculate number of all seats
+	for _, cinemahall := range res2.Value {
+		if cinemahall.Name == cinemahallName {
+			numSeats = cinemahall.SeatRowCapacity * cinemahall.SeatRows
+			break
+		}
+	}
+
+	// subtract number of available seats
+	for _, reservation := range reservations {
+		if reservation.show == showId {
+			if reservation.reserved {
+				numSeats = numSeats - reservation.seats
+			}
+		}
+	}
+	return numSeats
 }
 
 func makeResponse(res *proto.Response, message string) error {

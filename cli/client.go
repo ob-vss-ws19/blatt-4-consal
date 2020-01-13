@@ -140,6 +140,25 @@ func main() {
 			cm.GetCinemahalls(context.TODO(), &proto.Request{})
 			informationCinemahall(cm.GetCinemahalls(context.TODO(), &proto.Request{}))
 		}
+	case "sw":
+		sw = proto.NewShowService("show", service.Client())
+		secondFlag := flag.Arg(1)
+		switch secondFlag {
+		case "add":
+			sw.GetShows(context.TODO(), &proto.Request{})
+			information(sw.AddShow(context.TODO(), &proto.ShowRequest{
+				Movie:      flag.Arg(2),
+				CinemaHall: flag.Arg(3),
+			}))
+		case "delete":
+			sw.GetShows(context.TODO(), &proto.Request{})
+			information(sw.DeleteShow(context.TODO(), &proto.ShowRequest{
+				Id: stringToInt(flag.Arg(2)),
+			}))
+		case "get":
+			sw.GetShows(context.TODO(), &proto.Request{})
+			informationShow(sw.GetShows(context.TODO(), &proto.Request{}))
+		}
 	case "rv":
 		rv = proto.NewReservationService("reservation", service.Client())
 		secondFlag := flag.Arg(1)
@@ -161,31 +180,12 @@ func main() {
 		case "get":
 			rv.GetReservations(context.TODO(), &proto.Request{})
 		}
-	case "sw":
-		sw = proto.NewShowService("show", service.Client())
-		secondFlag := flag.Arg(1)
-		switch secondFlag {
-		case "add":
-			sw.GetShows(context.TODO(), &proto.Request{})
-			information(sw.AddShow(context.TODO(), &proto.ShowRequest{
-				Movie:      flag.Arg(2),
-				CinemaHall: flag.Arg(3),
-			}))
-		case "delete":
-			sw.GetShows(context.TODO(), &proto.Request{})
-			information(sw.DeleteShow(context.TODO(), &proto.ShowRequest{
-				Id: stringToInt(flag.Arg(2)),
-			}))
-		case "get":
-			sw.GetShows(context.TODO(), &proto.Request{})
-			informationShow(sw.GetShows(context.TODO(), &proto.Request{}))
-		}
-
 	case "fill":
 		us = proto.NewUserService("user", service.Client())
 		mv = proto.NewMovieService("movie", service.Client())
 		cm = proto.NewCinemahallService("cinemahall", service.Client())
 		sw = proto.NewShowService("show", service.Client())
+		rv = proto.NewReservationService("reservation", service.Client())
 
 		us.GetUsers(context.TODO(), &proto.Request{})
 		information(us.AddUser(context.TODO(), &proto.UserRequest{
@@ -223,6 +223,16 @@ func main() {
 		information(sw.AddShow(context.TODO(), &proto.ShowRequest{
 			CinemaHall: "Kino2",
 			Movie:      "Batman",
+		}))
+		information(rv.ReservationInquiry(context.TODO(), &proto.ReservationRequest{
+			UserName: "Benutzer1",
+			Show:     1,
+			Seats:    5,
+		}))
+		information(rv.ReservationInquiry(context.TODO(), &proto.ReservationRequest{
+			UserName: "Benutzer2",
+			Show:     2,
+			Seats:    5,
 		}))
 
 	default:
