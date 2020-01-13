@@ -1,29 +1,26 @@
 package main
 
 import (
-	"blatt-4-consal/services/cinemahallservice"
-	"blatt-4-consal/services/movieservice"
-	"blatt-4-consal/services/reservationservice"
-	"blatt-4-consal/services/showservice"
-	"blatt-4-consal/services/userservice"
+	microservice3 "blatt-4-consal/services/cinemahallservice/microservice"
+	microservice2 "blatt-4-consal/services/movieservice/microservice"
+	microservice5 "blatt-4-consal/services/reservationservice/microservice"
+	microservice4 "blatt-4-consal/services/showservice/microservice"
+	microservice1 "blatt-4-consal/services/userservice/microservice"
 	"context"
 	"time"
-	//"blatt-4-consal/services/cinemahallservice"
-	//"blatt-4-consal/services/reservationservice"
-	//"blatt-4-consal/services/showservice"
 )
 
 func main() {
 	// start services asynchronously for user, movie, cinemahall, show and reservationservice
-	go userservice.StartUserService(context.TODO(), 3000)
+	go microservice1.StartUserService(context.TODO(), 3000)
 	sleep()
-	go movieservice.StartMovieService(context.TODO(), 3001)
+	go microservice2.StartMovieService(context.TODO(), 3001)
 	sleep()
-	go cinemahallservice.StartCinemaService(context.TODO(), 3002)
+	go microservice3.StartCinemaService(context.TODO(), 3002)
 	sleep()
-	go showservice.StartReservationService(context.TODO(), 3003)
+	go microservice4.StartShowService(context.TODO(), 3003)
 	sleep()
-	reservationservice.StartReservationService(context.TODO(), 3004)
+	microservice5.StartReservationService(context.TODO(), 3004)
 }
 
 func sleep() {

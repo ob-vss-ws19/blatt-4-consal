@@ -1,4 +1,4 @@
-package cinemahallservice
+package microservice
 
 import (
 	"blatt-4-consal/proto"

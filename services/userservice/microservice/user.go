@@ -1,4 +1,4 @@
-package userservice
+package microservice
 
 import (
 	"blatt-4-consal/proto"
@@ -72,13 +72,12 @@ func makeFailedResponse(res *proto.Response, message string) error {
 	return nil
 }
 
-//Start Service for user class
 func StartUserService(context context.Context, port int64) {
 	//Create a new Service. Add name address and context
 	service := micro.NewService(
 		micro.Name("user"),
 		micro.Version("latest"),
-		micro.Address(fmt.Sprintf(":%v", port)),
+		micro.Address(fmt.Sprintf(":%v", 3000)),
 		micro.Context(context),
 	)
 	// Init will parse the command line flags
