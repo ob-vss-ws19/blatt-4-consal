@@ -13,7 +13,7 @@ func main() {
 	service := micro.NewService(
 		micro.Name("movie"),
 		micro.Version("latest"),
-		micro.Address(fmt.Sprintf(":%v", 3001)),
+		//micro.Address(fmt.Sprintf(":%v", 3001)),
 		micro.Context(context.TODO()), //needed
 	)
 	// Init will parse the command line flags
