@@ -183,7 +183,6 @@ func StartReservationService(context context.Context, port int64) {
 	service := micro.NewService(
 		micro.Name("reservation"),
 		micro.Version("latest"),
-		micro.Address(fmt.Sprintf(":%v", port)),
 		micro.Context(context),
 	)
 	// Init will parse the command line flags

@@ -76,7 +76,6 @@ func StartMovieService(context context.Context, port int64) {
 	service := micro.NewService(
 		micro.Name("movie"),
 		micro.Version("latest"),
-		micro.Address(fmt.Sprintf(":%v", port)),
 		micro.Context(context), //needed
 	)
 	// Init will parse the command line flags

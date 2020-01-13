@@ -77,7 +77,6 @@ func StartUserService(context context.Context, port int64) {
 	service := micro.NewService(
 		micro.Name("user"),
 		micro.Version("latest"),
-		micro.Address(fmt.Sprintf(":%v", 3000)),
 		micro.Context(context),
 	)
 	// Init will parse the command line flags

@@ -5,5 +5,5 @@ RUN go build -o services/userservice/main services/userservice/main.go
 
 FROM iron/go
 COPY --from=builder /app/services/userservice/main /app/services/userservice
-EXPOSE 3000
+EXPOSE 52000-53000
 ENTRYPOINT [ "/app/userservice" ]
