@@ -79,7 +79,9 @@ func (rv *Reservation) DeleteReservation(ctx context.Context, req *proto.Reserva
 }
 
 func (rv *Reservation) GetReservations(ctx context.Context, req *proto.Request, res *proto.ReservationResponse) error {
-	for
+	for id, v := range rv.reservations {
+		res.Value = append(res.Value, &proto.ReservationRequest{ReservationId: id, UserName: v.user, Seats: v.seats, Show: v.show, Reserved: v.reserved})
+	}
 	return nil
 }
 
