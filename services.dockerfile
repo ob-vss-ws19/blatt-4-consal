@@ -1,7 +1,7 @@
 FROM obraun/vss-protoactor-jenkins as builder
 COPY . /app
 WORKDIR /app
-RUN go build -o services/services Services/main.go
+RUN go build -o services/services client/client.go
 
 FROM iron/go
 COPY --from=builder /app/services/services /app/services
