@@ -234,7 +234,12 @@ func main() {
 			Show:     2,
 			Seats:    5,
 		}))
-
+		information(rv.MakeReservation(context.TODO(), &proto.ReservationRequest{
+			ReservationId: 1,
+		}))
+		information(rv.MakeReservation(context.TODO(), &proto.ReservationRequest{
+			ReservationId: 2,
+		}))
 	default:
 		// Falls falsch benutzt, Usagemöglichkeiten anzeigen
 		flag.Usage()

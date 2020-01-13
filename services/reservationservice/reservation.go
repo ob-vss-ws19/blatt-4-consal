@@ -34,25 +34,40 @@ func (rv *Reservation) ReservationInquiry(context context.Context, req *proto.Re
 		rv.reservations = make(map[int32]*ReservationRequest)
 	}
 	if !showExists(req.Show) {
-		return makeResponse(res, fmt.Sprintf("#CHECK_CINE_FAIL: Show %d does not exist yet.", req.Show))
+		return makeResponse(res, fmt.Sprintf("#CHECK_RESERV_FAIL: Show %d does not exist yet.", req.Show))
 	}
 	if !userExists(req.UserName) {
-		return makeResponse(res, fmt.Sprintf("#CHECK_CINE_FAIL: User %s does not exist yet.", req.UserName))
+		return makeResponse(res, fmt.Sprintf("#CHECK_RESERV_FAIL: User %s does not exist yet.", req.UserName))
 	}
 	// is there enough seats
 	availableSeats := availableSeats(req.Show, rv.reservations)
 	if availableSeats < req.Seats {
-		return makeResponse(res, fmt.Sprintf("#CHECK_CINE_FAIL: Only %d seats available.", availableSeats))
+		return makeResponse(res, fmt.Sprintf("#CHECK_RESERV_FAIL: Only %d seats available.", availableSeats))
 	}
 
 	rv.reservations[rv.Id] = &ReservationRequest{seats: req.Seats, user: req.UserName, show: req.Show, reserved: false}
-	makeResponse(res, fmt.Sprintf("#CHECK_CINE: %d seats available for the show %d. Your reservation ID is %d.", req.Seats, req.Show, rv.Id))
+	makeResponse(res, fmt.Sprintf("#CHECK_RESERV: %d seats available for the show %d. Your reservation ID is %d.", req.Seats, req.Show, rv.Id))
 	rv.Id++
 	return nil
 }
 
 func (rv *Reservation) MakeReservation(context context.Context, req *proto.ReservationRequest, res *proto.Response) error {
-	return nil
+	// synchronize the method.
+	rv.mux.Lock()
+	rv.mux.Unlock()
+
+	if _, exists := rv.reservations[req.ReservationId]; !exists {
+		return makeResponse(res, fmt.Sprintf("#MAKE_RESERV_FAIL: There is no Reservation with ID: %d", req.ReservationId))
+	}
+	if rv.reservations[req.ReservationId].reserved {
+		return makeResponse(res, fmt.Sprintf("#MAKE_RESERV_FAIL: The Reservation with ID: %d is already booked.", req.ReservationId))
+	}
+	availableSeats := availableSeats(rv.reservations[req.ReservationId].show, rv.reservations)
+	if availableSeats < rv.reservations[req.ReservationId].seats {
+		return makeResponse(res, fmt.Sprintf("#MAKE_RESERV_FAIL: There are not enough available seats for reservation with the ID %d. Available are: %d. You want to reserve: %d", req.ReservationId, availableSeats, rv.reservations[req.ReservationId].seats))
+	}
+	rv.reservations[req.ReservationId].reserved = true
+	return makeResponse(res, fmt.Sprintf("#MAKE_RESERV: Reservation with ID %d succeed for the show %d with %d seats.", req.ReservationId, rv.reservations[req.ReservationId].show, rv.reservations[req.ReservationId].seats))
 }
 
 func (rv *Reservation) DeleteReservation(ctx context.Context, req *proto.ReservationRequest, res *proto.Response) error {
