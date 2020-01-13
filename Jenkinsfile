@@ -8,7 +8,7 @@ pipeline {
             steps {
                 sh 'echo build'
                 sh 'go build -o client.exe'
-                sh 'cd Services && go build -o services.exe'
+                sh 'cd services && go build -o services.exe'
             }
         }
         stage('Test') {
@@ -27,7 +27,7 @@ pipeline {
         stage('Lint') {
             agent {
                 docker { image 'obraun/vss-protoactor-jenkins' }
-            }   
+            }
             steps {
                 sh 'echo no lint'
                 //sh 'golangci-lint run --deadline 20m --enable-all'
