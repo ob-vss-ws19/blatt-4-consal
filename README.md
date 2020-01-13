@@ -1,4 +1,4 @@
-# Reservierungssystem für ein Kino (Blatt 4 Verteilte Softwaresysteme)
+# Reservierungssystem für ein Kino
 
 ## Beschreibung
 Es befinden sich 6 Microservices, die in user, movie, cinemahall, showing, reservation und client aufgeteilt sind.
@@ -16,55 +16,28 @@ Die Kommunikation der Microservices wird über micro bereitgestellt.
 -   Anschließend bauen der Services mit:
 
     ```
-    go build -o services.exe Services/main.go
+    go build -o services services/main.go
     ```
 
 -   Bauen des Clients:
 
     ```
-    go build -o client.exe
+    go build -o client cli/client.go
     ```
 
 -   Starten der Services:
 
     ```
-    ./Services/services.exe
+    ./services/services
     ```
 
 -   Starten des Clients:
 
     ```
-    client.exe fill
+    ./cli/client fill
     ```
 
 Für eine Liste an Befehlen siehe weiter unten Usage.
-
-## Ausführen mit Docker
-
--   Images bauen:
-
-    ```
-    docker build -f services.dockerfile -t services ./
-    docker build -f client.dockerfile -t client ./
-    ```
-
--   ein (Docker)-Netzwerk `testnet` erzeugen:
-
-    ```
-    docker network create testnet
-    ```
-
--   Starten der Services (Ports 8092-8096 müssen frei sein) im Netzwerk `testnet`:
-
-    ```
-    docker run --rm --net testnet server
-    ```
-
--   Starten des Clients (Port 8091 muss frei sein. Für Optionen siehe Usage weiter unten):
-
-    ```
-    docker run --rm --net testnet client fill
-    ```
 
 ## CLI-Commands
 
