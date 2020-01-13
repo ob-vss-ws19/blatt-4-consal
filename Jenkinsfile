@@ -17,11 +17,11 @@ pipeline {
             }
             steps {
                 sh 'echo run tests...'
-                sh 'cd services/cinemahall && go test'
-                sh 'cd services/movie && go test'
-                sh 'cd services/reservation && go test'
-                sh 'cd services/show && go test'
-                sh 'cd services/user && go test'
+                sh 'cd services/cinemahallservice && go test'
+                sh 'cd services/movieservice && go test'
+                sh 'cd services/reservationservice && go test'
+                sh 'cd services/showservice && go test'
+                sh 'cd services/userservice && go test'
             }
         }
         stage('Lint') {
