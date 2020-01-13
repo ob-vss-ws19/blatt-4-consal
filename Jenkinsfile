@@ -37,13 +37,13 @@ pipeline {
             agent any
             steps {
                 sh "echo build docker"
-                sh "docker-build-and-push -b ${BRANCH_NAME} -s client -f client.dockerfile"
-                sh "docker-build-and-push -b ${BRANCH_NAME} -s services -f services.dockerfile"
                 sh "docker-build-and-push -b ${BRANCH_NAME} -s userservice -f services/userservice/Dockerfile"
-                sh "docker-build-and-push -b ${BRANCH_NAME} -s movieservice -f services/movieservice/Dockerfile"
-                sh "docker-build-and-push -b ${BRANCH_NAME} -s cinemahallservice -f services/cinemahallservice/Dockerfile"
-                sh "docker-build-and-push -b ${BRANCH_NAME} -s showservice -f services/showservice/Dockerfile"
-                sh "docker-build-and-push -b ${BRANCH_NAME} -s reservationservice -f services/reservationservice/Dockerfile"
+//                 sh "docker-build-and-push -b ${BRANCH_NAME} -s movieservice -f services/movieservice/Dockerfile"
+//                 sh "docker-build-and-push -b ${BRANCH_NAME} -s cinemahallservice -f services/cinemahallservice/Dockerfile"
+//                 sh "docker-build-and-push -b ${BRANCH_NAME} -s showservice -f services/showservice/Dockerfile"
+//                 sh "docker-build-and-push -b ${BRANCH_NAME} -s reservationservice -f services/reservationservice/Dockerfile"
+//                 sh "docker-build-and-push -b ${BRANCH_NAME} -s client -f client.dockerfile"
+//                 sh "docker-build-and-push -b ${BRANCH_NAME} -s services -f services.dockerfile"
 
             }
         }
