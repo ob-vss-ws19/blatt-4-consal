@@ -1,9 +1,9 @@
 FROM obraun/vss-protoactor-jenkins as builder
 COPY . /app
 WORKDIR /app
-RUN go build -o reservationservice/main reservationservice/main.go
+RUN go build -o services/reservationservice/main services/reservationservice/main.go
 
 FROM iron/go
-COPY --from=builder /app/reservationservice/main /app/reservationservice
+COPY --from=builder /app/services/reservationservice/main /app/services/reservationservice
 EXPOSE 3004
 ENTRYPOINT [ "/app/reservationservice" ]

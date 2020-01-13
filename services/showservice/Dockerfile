@@ -1,9 +1,9 @@
 FROM obraun/vss-protoactor-jenkins as builder
 COPY . /app
 WORKDIR /app
-RUN go build -o showservice/main showservice/main.go
+RUN go build -o services/showservice/main services/showservice/main.go
 
 FROM iron/go
-COPY --from=builder /app/showservice/main /app/showservice
+COPY --from=builder /app/services/showservice/main /app/services/showservice
 EXPOSE 3003
 ENTRYPOINT [ "/app/showservice" ]
