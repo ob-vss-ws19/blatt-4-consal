@@ -71,7 +71,11 @@ func (rv *Reservation) MakeReservation(context context.Context, req *proto.Reser
 }
 
 func (rv *Reservation) DeleteReservation(ctx context.Context, req *proto.ReservationRequest, res *proto.Response) error {
-	return nil
+	if _, exists := rv.reservations[req.ReservationId]; !exists {
+		return makeResponse(res, fmt.Sprintf("#DELETE_RESERV_FAIL: Reservation with the ID %d doens't exist."))
+	}
+	delete(rv.reservations, req.ReservationId)
+	return makeResponse(res, fmt.Sprintf("#DELETE_RESERV: Reservation with the ID %d has been deleted."))
 }
 
 func (rv *Reservation) GetReservations(ctx context.Context, req *proto.Request, res *proto.ReservationResponse) error {
