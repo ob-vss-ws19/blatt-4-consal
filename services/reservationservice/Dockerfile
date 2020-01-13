@@ -6,4 +6,4 @@ RUN go build -o services/reservationservice/main services/reservationservice/mai
 FROM iron/go
 COPY --from=builder /app/services/reservationservice/main /app/services/reservationservice
 EXPOSE 52000-53000
-ENTRYPOINT [ "/app/reservationservice" ]
+ENTRYPOINT [ "/app/services/reservationservice" ]
