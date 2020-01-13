@@ -3,7 +3,7 @@
 ## Beschreibung
 Es befinden sich 6 Microservices, die in user, movie, cinemahall, showing, reservation und client aufgeteilt sind.
 Die Kommunikation der Microservices wird über micro bereitgestellt.
-
+Die Services können alle entweder einzeln in ihren ihren eigenen package oder über die main in "services" gestartet werden.
 
 ## Getting started
 
@@ -36,8 +36,6 @@ Die Kommunikation der Microservices wird über micro bereitgestellt.
     ```
     ./cli/client fill
     ```
-
-Für eine Liste an Befehlen siehe weiter unten Usage.
 
 ## CLI-Commands
 
