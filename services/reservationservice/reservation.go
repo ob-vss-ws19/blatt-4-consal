@@ -11,7 +11,7 @@ import (
 
 type Reservation struct {
 	reservations map[int32]*ReservationRequest
-	nextID       int32
+	Id           int32
 	mux          sync.RWMutex
 }
 
@@ -28,98 +28,88 @@ type ReservationRequest struct {
 var reservations = make(map[int32]*ReservationRequest)
 var reservationNumber = 1
 
-func doesUserExists(userName string) bool {
+func userExists(userName string) bool {
 	var client client.Client
-	userService := proto.NewUserService("user", client)
-	rsp, err := userService.GetUsers(context.TODO(), &proto.Request{})
+	tmpShow := proto.NewUserService("user", client)
+	res, err := tmpShow.GetUsers(context.TODO(), &proto.Request{})
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		fmt.Println(err)
 		return false
 	}
-	//user does exist
-	for _, v := range rsp.Value {
-		if userName == v.Name {
+	for _, user := range res.Value {
+		if user.Name == userName {
 			return true
 		}
 	}
 	return false
 }
 
-func doesShowExist(showId int32) bool {
+func showExists(showId int32) bool {
 	var client client.Client
-	showService := proto.NewShowService("show", client)
-	rsp, err := showService.GetShows(context.TODO(), &proto.Request{})
+	tmpShow := proto.NewShowService("show", client)
+	res, err := tmpShow.GetShows(context.TODO(), &proto.Request{})
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		fmt.Println(err)
 		return false
 	}
-	//user does exist
-	for _, v := range rsp.Value {
-		if showId == v.Id {
+	for _, show := range res.Value {
+		if show.Id == showId {
 			return true
 		}
 	}
 	return false
 }
 
-func (rv *Reservation) MakeReservation(ctx context.Context, req *proto.ReservationRequest, rsp *proto.Response) error {
-	//check if user already exists or made a reservation
-	if !doesUserExists(req.UserName) {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("User %s does not exist", req.UserName)
-		return nil
+func (rv *Reservation) ReservationInquiry(context context.Context, req *proto.ReservationRequest, res *proto.Response) error {
+	if rv.reservations == nil {
+		rv.Id = 1
+		rv.reservations = make(map[int32]*ReservationRequest)
 	}
-	//check if show does exist
-	if !doesShowExist(req.Show) {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Show %s does not exist", req.Show)
+	if !showExists(req.Show) {
+		return makeResponse(res, fmt.Sprintf("#RESERVATION_INQUIRY: Show %d does not exist yet.", req.Show))
 	}
-
-	//check if there are free seats
-
-	//Add new reservation
-	if _, ok := reservations[req.ReservationId]; ok {
-		rsp.Success = false
-		rsp.Message = fmt.Sprintf("Reservation with id: %s does already exist", req.ReservationId)
-		return nil
+	if !userExists(req.UserName) {
+		return makeResponse(res, fmt.Sprintf("#RESERVATION_INQUIRY: User %d does not exist yet.", req.UserName))
 	}
 
-	reservations[req.ReservationId] = &ReservationRequest{
-		user: req.UserName, reservationId: 123} //TODO
-	rsp.Success = true
-	rsp.Message = fmt.Sprintf("New Reservation with id: %s added", req.ReservationId)
 	return nil
 }
 
-func (rv *Reservation) DeleteReservation(ctx context.Context, req *proto.ReservationRequest, rsp *proto.Response) error {
+func (rv *Reservation) MakeReservation(context context.Context, req *proto.ReservationRequest, res *proto.Response) error {
 	return nil
 }
 
-func (rv *Reservation) ReservationInquiry(ctx context.Context, req *proto.ReservationRequest, rsp *proto.Response) error {
+func (rv *Reservation) DeleteReservation(ctx context.Context, req *proto.ReservationRequest, res *proto.Response) error {
 	return nil
 }
 
-func (rv *Reservation) GetReservations(ctx context.Context, req *proto.Request, rsp *proto.ReservationResponse) error {
+func (rv *Reservation) GetReservations(ctx context.Context, req *proto.Request, res *proto.ReservationResponse) error {
 	return nil
 }
 
-//Start Service for movie class
+func makeResponse(res *proto.Response, message string) error {
+	res.Success = true
+	res.Message = message
+	return nil
+}
+
+// Start Service for reservation class
 func StartReservationService(context context.Context, port int64) {
-	//Create a new Service. Add name address and context
+	// Create a new Service. Add name address and context
 	service := micro.NewService(
 		micro.Name("reservation"),
 		micro.Version("latest"),
 		micro.Address(fmt.Sprintf(":%v", port)),
-		micro.Context(context), //needed
+		micro.Context(context),
 	)
 	// Init will parse the command line flags
 	service.Init()
-	//Register handler
+	// Register handler
 	proto.RegisterReservationHandler(service.Server(), new(Reservation))
 	fmt.Println("Reservation Service starting...")
-	//Run the Server
+	// Run the Server
 	if err := service.Run(); err != nil {
-		//Print error message if there is any
+		// Print error message if there is any
 		fmt.Println(err)
 	}
 }

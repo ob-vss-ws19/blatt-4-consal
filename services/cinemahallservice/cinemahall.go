@@ -77,7 +77,7 @@ func makeResponse(res *proto.Response, message string) error {
 	return nil
 }
 
-//Start Service for movie class
+//Start Service for cinema class
 func StartCinemaService(context context.Context, port int64) {
 	//Create a new Service. Include name, version, address and context
 	service := micro.NewService(
