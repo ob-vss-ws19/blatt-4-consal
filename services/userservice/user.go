@@ -27,7 +27,7 @@ func (us *User) DeleteUser(context context.Context, req *proto.UserRequest, res 
 	if _, exists := Users[req.Name]; !exists {
 		return makeFailedResponse(res, fmt.Sprintf("#DELETE_USER_FAIL: User %s doesn't exist yet", req.Name))
 	}
-	// deleteCorrespondingReservations(req.Name)
+	deleteCorrespondingReservations(req.Name)
 	delete(Users, req.Name)
 	return makeResponse(res, fmt.Sprintf("#DELETE_USER: User %s deleted successfully", req.Name))
 
