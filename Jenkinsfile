@@ -7,8 +7,8 @@ pipeline {
             }
             steps {
                 sh 'echo build'
-                sh 'go build -o client.exe'
-                sh 'cd services && go build -o services.exe'
+                sh 'cd cli && go build client.go'
+                sh 'cd services && go build main.go'
             }
         }
         stage('Test') {
