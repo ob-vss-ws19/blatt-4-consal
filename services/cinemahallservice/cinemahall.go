@@ -25,7 +25,7 @@ func (cm *Cinemahall) AddCinemahall(ctx context.Context, req *proto.CinemahallRe
 	// A two-value assignment tests for the existence of a key
 	//if ok true -> key exists in the map
 	if _, exists := cinemas[req.Name]; exists {
-		return makeResponse(res, fmt.Sprintf("#ADD_CINE_FAIL: Cinemahall %s does already exist", req.Name))
+		return makeFailedResponse(res, fmt.Sprintf("#ADD_CINE_FAIL: Cinemahall %s does already exist", req.Name))
 	}
 	//Cinema doesn't exist. Add new one
 	cinemas[req.Name] = &CinemahallRequest{SeatRows: req.SeatRows, SeatRowsCapacity: req.SeatRowCapacity}
@@ -34,7 +34,7 @@ func (cm *Cinemahall) AddCinemahall(ctx context.Context, req *proto.CinemahallRe
 
 func (cm *Cinemahall) DeleteCinemahall(ctx context.Context, req *proto.CinemahallRequest, res *proto.Response) error {
 	if _, exists := cinemas[req.Name]; !exists {
-		return makeResponse(res, fmt.Sprintf("#DELETE_CINE_FAIL: Cinema %s doesn't exist yet", req.Name))
+		return makeFailedResponse(res, fmt.Sprintf("#DELETE_CINE_FAIL: Cinema %s doesn't exist yet", req.Name))
 	}
 	//Cinema does exist
 	//create Show service client and delete corresponding shows
@@ -73,6 +73,12 @@ func (cm *Cinemahall) GetCinemahalls(ctx context.Context, req *proto.Request, rs
 
 func makeResponse(res *proto.Response, message string) error {
 	res.Success = true
+	res.Message = message
+	return nil
+}
+
+func makeFailedResponse(res *proto.Response, message string) error {
+	res.Success = false
 	res.Message = message
 	return nil
 }

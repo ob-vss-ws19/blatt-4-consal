@@ -16,7 +16,7 @@ var Users = make(map[string]bool)
 func (us *User) AddUser(ctx context.Context, req *proto.UserRequest, res *proto.Response) error {
 	// kontrollieren ob Benutzer schon existiert.
 	if _, exists := Users[req.Name]; exists {
-		return makeResponse(res, fmt.Sprintf("#ADD_USER_FAIL: User '%s' does exist already.", req.Name))
+		return makeFailedResponse(res, fmt.Sprintf("#ADD_USER_FAIL: User '%s' does exist already.", req.Name))
 	}
 	// Setze neuen User in die Map
 	Users[req.Name] = true
@@ -25,7 +25,7 @@ func (us *User) AddUser(ctx context.Context, req *proto.UserRequest, res *proto.
 
 func (us *User) DeleteUser(context context.Context, req *proto.UserRequest, res *proto.Response) error {
 	if _, exists := Users[req.Name]; !exists {
-		return makeResponse(res, fmt.Sprintf("#DELETE_USER_FAIL: User %s doesn't exist yet", req.Name))
+		return makeFailedResponse(res, fmt.Sprintf("#DELETE_USER_FAIL: User %s doesn't exist yet", req.Name))
 	}
 	// deleteCorrespondingReservations(req.Name)
 	delete(Users, req.Name)
@@ -62,6 +62,12 @@ func (us *User) GetUsers(context context.Context, req *proto.Request, res *proto
 
 func makeResponse(res *proto.Response, message string) error {
 	res.Success = true
+	res.Message = message
+	return nil
+}
+
+func makeFailedResponse(res *proto.Response, message string) error {
+	res.Success = false
 	res.Message = message
 	return nil
 }

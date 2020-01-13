@@ -21,10 +21,10 @@ var Id int32 = 1
 
 func (*Show) AddShow(context context.Context, req *proto.ShowRequest, res *proto.Response) error {
 	if !doesMovieExist(req.Movie) {
-		return makeResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Movie %s doesn't exist yet", req.Movie))
+		return makeFailedResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Movie %s doesn't exist yet", req.Movie))
 	}
 	if !doesCinemahallExist(req.CinemaHall) {
-		return makeResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Cinemahall %s doesn't exist yet", req.Movie))
+		return makeFailedResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Cinemahall %s doesn't exist yet", req.Movie))
 	}
 	Shows[Id] = &ShowRequest{Movie: req.Movie, Cinemahall: req.CinemaHall}
 	makeResponse(res, fmt.Sprintf("#SHOW_ADD: New Show with ID %d in Cinema %s with Movie Title %s added", Id, req.CinemaHall, req.Movie))
@@ -34,7 +34,7 @@ func (*Show) AddShow(context context.Context, req *proto.ShowRequest, res *proto
 
 func (*Show) DeleteShow(context context.Context, req *proto.ShowRequest, res *proto.Response) error {
 	if _, exists := Shows[req.Id]; !exists {
-		return makeResponse(res, fmt.Sprintf("#SHOW_DELETE_FAIL: Show %d does not exist", req.Id))
+		return makeFailedResponse(res, fmt.Sprintf("#SHOW_DELETE_FAIL: Show %d does not exist", req.Id))
 	}
 	// create Reservation service client and delete corresponding Reservations
 	// delete cinemahall from map
@@ -105,6 +105,12 @@ func doesMovieExist(movieTitle string) bool {
 
 func makeResponse(res *proto.Response, message string) error {
 	res.Success = true
+	res.Message = message
+	return nil
+}
+
+func makeFailedResponse(res *proto.Response, message string) error {
+	res.Success = false
 	res.Message = message
 	return nil
 }

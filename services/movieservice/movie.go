@@ -15,7 +15,7 @@ var movies = make(map[string]bool)
 
 func (mv *Movie) AddMovie(context context.Context, req *proto.MovieRequest, res *proto.Response) error {
 	if _, exists := movies[req.MovieTitle]; exists {
-		return makeResponse(res, fmt.Sprintf("#ADD_MOVIE_FAIL: Movie %s does exist", req.MovieTitle))
+		return makeFailedResponse(res, fmt.Sprintf("#ADD_MOVIE_FAIL: Movie %s does exist", req.MovieTitle))
 	}
 	movies[req.MovieTitle] = true // value type is not specified
 	return makeResponse(res, fmt.Sprintf("#ADD_MOVIE: Movie %s added", req.MovieTitle))
@@ -23,7 +23,7 @@ func (mv *Movie) AddMovie(context context.Context, req *proto.MovieRequest, res 
 
 func (mv *Movie) DeleteMovie(ctx context.Context, req *proto.MovieRequest, res *proto.Response) error {
 	if _, exists := movies[req.MovieTitle]; !exists {
-		return makeResponse(res, fmt.Sprintf("#DELETE_MOVIE_FAIL: Movie %s doesn't exist yet", req.MovieTitle))
+		return makeFailedResponse(res, fmt.Sprintf("#DELETE_MOVIE_FAIL: Movie %s doesn't exist yet", req.MovieTitle))
 	}
 	//create Show service client and delete corresponding shows
 	deleteCorrespondingShows(req.MovieTitle)
@@ -60,6 +60,12 @@ func (mv *Movie) GetMovies(context context.Context, req *proto.Request, res *pro
 
 func makeResponse(res *proto.Response, message string) error {
 	res.Success = true
+	res.Message = message
+	return nil
+}
+
+func makeFailedResponse(res *proto.Response, message string) error {
+	res.Success = false
 	res.Message = message
 	return nil
 }
