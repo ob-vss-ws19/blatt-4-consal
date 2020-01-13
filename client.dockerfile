@@ -4,6 +4,6 @@ WORKDIR /app
 RUN go build -o cli/client cli/client.go
 
 FROM iron/go
-COPY --from=builder /app/cli/client /app/client
-EXPOSE 8091
+COPY --from=builder /app/cli/client /app/cli
+EXPOSE 52000-53000
 ENTRYPOINT [ "/app/cli" ]
