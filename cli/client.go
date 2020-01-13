@@ -164,21 +164,25 @@ func main() {
 		secondFlag := flag.Arg(1)
 		switch secondFlag {
 		case "check":
-			rv.ReservationInquiry(context.TODO(), &proto.ReservationRequest{
+			rv.GetReservations(context.TODO(), &proto.Request{})
+			information(rv.ReservationInquiry(context.TODO(), &proto.ReservationRequest{
 				UserName: flag.Arg(2),
 				Show:     stringToInt(flag.Arg(3)),
 				Seats:    stringToInt(flag.Arg(4)),
-			})
+			}))
 		case "make":
-			rv.MakeReservation(context.TODO(), &proto.ReservationRequest{
+			rv.GetReservations(context.TODO(), &proto.Request{})
+			information(rv.MakeReservation(context.TODO(), &proto.ReservationRequest{
 				ReservationId: stringToInt(flag.Arg(2)),
-			})
+			}))
 		case "delete":
-			rv.DeleteReservation(context.TODO(), &proto.ReservationRequest{
+			rv.GetReservations(context.TODO(), &proto.Request{})
+			information(rv.DeleteReservation(context.TODO(), &proto.ReservationRequest{
 				ReservationId: stringToInt(flag.Arg(2)),
-			})
+			}))
 		case "get":
 			rv.GetReservations(context.TODO(), &proto.Request{})
+			informationReservation(rv.GetReservations(context.TODO(), &proto.Request{}))
 		}
 	case "fill":
 		us = proto.NewUserService("user", service.Client())
@@ -244,6 +248,12 @@ func main() {
 		// Falls falsch benutzt, Usagemöglichkeiten anzeigen
 		flag.Usage()
 		return
+	}
+}
+
+func informationReservation(res *proto.ReservationResponse, error error) {
+	if error == nil {
+		fmt.Println(res)
 	}
 }
 
