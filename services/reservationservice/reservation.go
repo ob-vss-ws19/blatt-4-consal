@@ -28,6 +28,33 @@ type ReservationRequest struct {
 var reservations = make(map[int32]*ReservationRequest)
 var reservationNumber = 1
 
+func (rv *Reservation) ReservationInquiry(context context.Context, req *proto.ReservationRequest, res *proto.Response) error {
+	if rv.reservations == nil {
+		rv.Id = 1
+		rv.reservations = make(map[int32]*ReservationRequest)
+	}
+	if !showExists(req.Show) {
+		return makeResponse(res, fmt.Sprintf("#RESERVATION_INQUIRY: Show %d does not exist yet.", req.Show))
+	}
+	if !userExists(req.UserName) {
+		return makeResponse(res, fmt.Sprintf("#RESERVATION_INQUIRY: User %s does not exist yet.", req.UserName))
+	}
+
+	return nil
+}
+
+func (rv *Reservation) MakeReservation(context context.Context, req *proto.ReservationRequest, res *proto.Response) error {
+	return nil
+}
+
+func (rv *Reservation) DeleteReservation(ctx context.Context, req *proto.ReservationRequest, res *proto.Response) error {
+	return nil
+}
+
+func (rv *Reservation) GetReservations(ctx context.Context, req *proto.Request, res *proto.ReservationResponse) error {
+	return nil
+}
+
 func userExists(userName string) bool {
 	var client client.Client
 	tmpShow := proto.NewUserService("user", client)
@@ -58,33 +85,6 @@ func showExists(showId int32) bool {
 		}
 	}
 	return false
-}
-
-func (rv *Reservation) ReservationInquiry(context context.Context, req *proto.ReservationRequest, res *proto.Response) error {
-	if rv.reservations == nil {
-		rv.Id = 1
-		rv.reservations = make(map[int32]*ReservationRequest)
-	}
-	if !showExists(req.Show) {
-		return makeResponse(res, fmt.Sprintf("#RESERVATION_INQUIRY: Show %d does not exist yet.", req.Show))
-	}
-	if !userExists(req.UserName) {
-		return makeResponse(res, fmt.Sprintf("#RESERVATION_INQUIRY: User %d does not exist yet.", req.UserName))
-	}
-
-	return nil
-}
-
-func (rv *Reservation) MakeReservation(context context.Context, req *proto.ReservationRequest, res *proto.Response) error {
-	return nil
-}
-
-func (rv *Reservation) DeleteReservation(ctx context.Context, req *proto.ReservationRequest, res *proto.Response) error {
-	return nil
-}
-
-func (rv *Reservation) GetReservations(ctx context.Context, req *proto.Request, res *proto.ReservationResponse) error {
-	return nil
 }
 
 func makeResponse(res *proto.Response, message string) error {
