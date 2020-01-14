@@ -12,7 +12,7 @@ kann man mit
     reservationService := proto.NewReservationService("reservation", client)
     res, err := reservationService.GetReservations(context.TODO(), &proto.Request{})
 
-Requests an den Microservice mit den Namen `name` schicken.
+Requests an den Microservice mit den Namen `reservation` schicken.
 Hier Beispielsweise ein Request, um alle Reservationen zu erhalten.
 
 ### Response an ein Microservice
