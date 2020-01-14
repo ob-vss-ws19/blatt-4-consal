@@ -12,6 +12,18 @@ import (
 	"time"
 )
 
+var cli client.Client
+var tmpContext context.Context
+var cancel context.CancelFunc
+var cinemahall proto.CinemahallService
+
+func initialize() (client.Client, context.Context, context.CancelFunc) {
+	tmpContext, cancel := context.WithCancel(context.Background())
+	go StartService(tmpContext, "cinemahall")
+	var client client.Client
+	return client, tmpContext, cancel
+}
+
 func StartService(context context.Context, servicename string) {
 	//Create a new Service. Include name, version, address and context
 	service := micro.NewService(
@@ -29,26 +41,73 @@ func StartService(context context.Context, servicename string) {
 	}
 }
 
-func TestCinemahall(t *testing.T) {
-	tmpContext, cancel := context.WithCancel(context.Background())
-	servicename := "cinemahall"
-	go StartService(tmpContext, servicename)
-	time.Sleep(300 * time.Millisecond)
-
-	var client client.Client
-	cinemahall := proto.NewCinemahallService("cinemahall", client)
-	req := &proto.CinemahallRequest{
-		Name:            "kino1",
-		SeatRows:        5,
-		SeatRowCapacity: 5,
+func getNewCinemahall(name string, SeatRows int32, SeatRowCapacity int32) *proto.CinemahallRequest {
+	cinema := &proto.CinemahallRequest{
+		Name:            name,
+		SeatRows:        SeatRows,
+		SeatRowCapacity: SeatRowCapacity,
 	}
-	cinemahall.GetCinemahalls(tmpContext, &proto.Request{})
-	res, err := cinemahall.AddCinemahall(tmpContext, req)
+	return cinema
+}
+
+func init() {
+	fmt.Println("Starting Cinemahall Microservice")
+	cli, tmpContext, cancel = initialize()
+	cinemahall = proto.NewCinemahallService("cinemahall", cli)
+}
+
+func TestCreateCinemahall(t *testing.T) {
+
+	request1 := getNewCinemahall("kino1", 5, 5)
+	fix()
+	sleep()
+	res, err := cinemahall.AddCinemahall(tmpContext, request1)
+
 	assert.Nil(t, err)
-	//assert.True(t, res.Success)
+	assert.True(t, res.Success)
+}
 
-	fmt.Print(cinemahall)
-	fmt.Print(res)
+func TestCreateDoubleCinemahall(t *testing.T) {
 
+	request1 := getNewCinemahall("kino2", 5, 5)
+	sleep()
+	res1, err1 := cinemahall.AddCinemahall(tmpContext, request1)
+	sleep()
+	res2, err2 := cinemahall.AddCinemahall(tmpContext, request1)
+
+	assert.Nil(t, err1)
+	assert.True(t, res1.Success)
+
+	assert.Nil(t, err2)
+	assert.False(t, res2.Success)
 	cancel()
+}
+
+//func TestCreateSameCinemahall(t *testing.T) {
+//
+//	request1 := getNewCinemahall("kino2", 5, 5)
+//
+//	//cinemahall2 := proto.NewCinemahallService("cinemahall", cli)
+//	//request2 := getNewCinemahall("kino2", 5, 5)
+//
+//
+//	cinemahall.GetCinemahalls(tmpContext, &proto.Request{})
+//	res1, err1 := cinemahall.AddCinemahall(tmpContext, request1)
+//	res2, err2 := cinemahall.AddCinemahall(tmpContext, request1)
+//
+//
+//	assert.Nil(t, err1)
+//	assert.True(t, res1.Success)
+//
+//	assert.Nil(t, err2)
+//	assert.False(t, res2.Success)
+//	cancel()
+//}
+
+func sleep() {
+	time.Sleep(300 * time.Millisecond)
+}
+
+func fix() {
+	cinemahall.GetCinemahalls(tmpContext, &proto.Request{})
 }
