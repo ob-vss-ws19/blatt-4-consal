@@ -3,7 +3,8 @@
 ## Beschreibung
 Es befinden sich 6 Microservices, die in user, movie, cinemahall, showing, reservation und client aufgeteilt sind.
 Die Kommunikation der Microservices wird über micro bereitgestellt.
-Die Services können alle entweder einzeln in ihren ihren eigenen package oder über die main in "services" gestartet werden.
+Die Services können alle entweder einzeln oder über 'startServicesLocal.sh' gestartet werden.
+Zudem ist es möglich, über 'startServicesDocker' die aktuellsten Dockercontainer aus develop auszuführen.
 
 ## Getting started
 
@@ -13,28 +14,28 @@ Die Services können alle entweder einzeln in ihren ihren eigenen package oder �
     git clone https://github.com/ob-vss-ws19/blatt-4-consal.git kino && cd kino
     ```
 
--   Anschließend bauen der Services mit:
-
-    ```
-    go build -o services services/main.go
-    ```
-
 -   Bauen des Clients:
 
     ```
     go build -o client cli/client.go
     ```
 
--   Starten der Services:
-
-    ```
-    ./services/services
-    ```
-
 -   Starten des Clients:
 
     ```
-    ./cli/client fill
+    ./cli fill
+    ```
+
+-  Starten der Services Lokal
+
+    ```
+    ./startServicesLocal.sh
+    ```
+
+  Starten der Services Über Dockercontainer
+
+    ```
+    ./startServicesDocker.sh
     ```
 
 ## CLI-Commands
