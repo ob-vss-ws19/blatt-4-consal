@@ -6,7 +6,7 @@ Um auf die Microservices über die Kommandozeile zu benutzen, verwendet man den 
 Die Services können alle entweder einzeln oder über `startServicesLocal.sh` gestartet werden.
 Zudem ist es möglich, über `startServicesDocker` die aktuellsten Dockercontainer aus develop auszuführen.
 
-Die Kommunikation zwischen den Microservices wird [hier](https://github.com/ob-vss-ws19/blatt-4-consal/blob/development/Protocol.md) genauer erklärt.
+__Die Kommunikation zwischen den Microservices wird [hier](https://github.com/ob-vss-ws19/blatt-4-consal/blob/development/Protocol.md) genauer erklärt.__
 ## Let's Start!
 
 -   das Github Repository klonen:
