@@ -36,3 +36,37 @@ Um einen Eintrag in `show` zu erzeugen, muss mindestens ein `movie` und ein `cin
 
 Um einen Eintrag in `reservation` zu erzeugen, muss mindestens ein `show` und ein `user` vorhanden sein.
 
+### Verfügbare Funktionen
+
+#### Funktion
+- Funktionsname [parameter1] [parameter2] `Erklärung`
+
+#### User
+
+- AddUser [name] `Fügt einen neuen [user] hinzu`
+- DeleteUser [name] `Löscht den [user] und die damit verknüpften [reservations]`
+- GetUser `Gibt alle erstellten [user] zurück`
+
+#### Movie
+
+- AddMovie [name] `Fügt eine neue [movie] hinzu`
+- DeleteMovie [name] `Löscht den [movie] und die damit verknüpften [shows]`
+- GetMovie `Gibt alle erstellten [movies] zurück`
+
+#### Cinemahall
+
+- AddCinemahall [name] [seatrows] [seatrowcapacity] `Fügt eine neue [cinemahall] hinzu mit der Größe [seatrows] * [seatrowcapacity]`
+- DeleteCinemahall [name] `Löscht den [cinemahall] und die verknüpften [shows]`
+- GetCinemahall `Gibt alle erstellten [cinemahalls] zurück`
+
+#### Show
+- AddShow [moviename] [cinemahallname] `Verknüpft [moviename] & [cinemahallname] zu einer [show]`
+- DeleteShow [Id] `Löscht eine [show] mit der id [Id]`
+- GetShows `Gibt alle erstellten [shows] zurück`
+
+#### Reservation
+
+- CheckReservation [user] [movie] [seats] `Fragt eine Reservation für [user] für den Film [movie] mit [seats] Sitzplätzen an`
+- MakeReservation [reservationId] `Reserviert endgültig die Reservation mitder id [reservationId]`
+- DeleteReservation [reservationId] `Löscht eine [reservation] mit der id [id]`
+- GetReservations`Gibt alle erstellten [reservations] zurück`
