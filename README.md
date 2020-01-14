@@ -17,13 +17,13 @@ Zudem ist es möglich, über 'startServicesDocker' die aktuellsten Dockercontain
 -  Starten der Services Lokal
 
     ```
-    ./startServicesLocal.sh
+    bash startServicesLocal.sh
     ```
 
 -  Starten der Services Über Dockercontainer
 
     ```
-    ./startServicesDocker.sh
+    bash startServicesDocker.sh
     ```
 
 -   Bauen des Clients Lokal:
@@ -35,8 +35,21 @@ Zudem ist es möglich, über 'startServicesDocker' die aktuellsten Dockercontain
 -   Starten des Clients und mit Beispieldaten füllen:
 
     ```
-    ./cli fill
+    ./client fill
     ```
+
+-   Erhalte alle User:
+
+    ```
+    ./client us get
+    ```
+
+-   Füge neue Movie hinzu mit den Namen `Zohan`:
+
+    ```
+    ./client mv add Zohan
+    ```
+    `Siehe CLI-Commands für weitere ausführbare Befehle.`
 
 -   Bauen des Clients über Docker und mit Beispieldaten füllem:
 
@@ -44,14 +57,24 @@ Zudem ist es möglich, über 'startServicesDocker' die aktuellsten Dockercontain
     docker run terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-4-consal:PR-3-client fill
     ```
 
+
 ## CLI-Commands
 
--   Über den Client können jedem Service (cinema, movie, reservation, showing und user) Daten hinzugefügt (add), gelöscht (delete) und aufgelistet (get) werden.
-Einzige Ausnahme bietet hierbei reservation, hier ist es nicht möglich einfach eine Reservierung hinzuzufügen, diese muss zunächst beantragt (check) werden und anschließend gebucht (make).
+-   Über den Client können jedem Service `cinema, movie, reservation showing` und `user` Daten hinzugefügt `add`, gelöscht `delete` und aufgelistet `get` werden.
+Einzige Ausnahme bietet hierbei reservation, hier ist es nicht möglich einfach eine Reservierung hinzuzufügen, diese muss zunächst beantragt `check` werden und anschließend gebucht `make`.
+
+## Befehlausführung
+
+    ./client [Service] [Function] [Parameter]
+
+oder
+
+
+    docker run terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-4-consal:PR-3-client [Service] [Function] [Parameter]
+
+
 
 ```
-[Service] [Function] [Parameter]
-
 Services: us, mv, cm, sw, rv
 Functions: add, delete, get, ...
 
