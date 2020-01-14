@@ -1,86 +1,62 @@
 package microservice
 
-//
-//import (
-//	"blatt-4-consal/proto"
-//	movieservice "blatt-4-consal/services/movieservice/microservice"
-//	showservice "blatt-4-consal/services/showservice/microservice"
-//	"context"
-//	"fmt"
-//	"github.com/micro/go-micro"
-//	"github.com/micro/go-micro/client"
-//	"github.com/stretchr/testify/assert"
-//	_ "github.com/stretchr/testify/assert"
-//
-//	"testing"
-//	"time"
-//)
-//
-//var cli client.Client
-//var tmpContext context.Context
-//var cancel context.CancelFunc
-//var cinemahall proto.CinemahallService
-//var movie proto.MovieService
-//var show proto.ShowService
-//
-//func init() {
-//	fmt.Println("Starting Cinemahall Microservice")
-//	cli, tmpContext, cancel = initialize()
-//	cinemahall = proto.NewCinemahallService("cinemahall", cli)
-//	show = proto.NewShowService("show", cli)
-//	movie = proto.NewMovieService("movie", cli)
-//	fix()
-//}
-//
-//func initialize() (client.Client, context.Context, context.CancelFunc) {
-//	tmpContext, cancel = context.WithCancel(context.Background())
-//	go StartService(tmpContext, "cinemahall", 3000)
-//	sleep()
-//	go StartService(tmpContext, "show", 3001)
-//	sleep()
-//	go StartService(tmpContext, "movie", 3002)
-//	sleep()
-//	var client client.Client
-//	return client, tmpContext, cancel
-//}
-//
-//func StartService(context context.Context, servicename string, port int32) {
-//	//Create a new Service. Include name, version, address and context
-//
-//	service := micro.NewService(
-//		micro.Name(servicename),
-//		micro.Version("latest"),
-//		micro.Context(context), //needed
-//		micro.Address(fmt.Sprintf(":%v", port)),
-//	)
-//	service.Init()
-//
-//	//Register handler
-//	switch servicename {
-//	case "cinemahall":
-//		proto.RegisterCinemahallHandler(service.Server(), new(Cinemahall))
-//	case "movie":
-//		proto.RegisterMovieHandler(service.Server(), new(movieservice.Movie))
-//	case "show":
-//		proto.RegisterShowHandler(service.Server(), new(showservice.Show))
-//	}
-//	fmt.Println("Service starting...")
-//	//Run the Server
-//	if err := service.Run(); err != nil {
-//		//Print error message if there is any
-//		fmt.Println(err)
-//	}
-//}
-//
-//func getNewCinemahall(name string, SeatRows int32, SeatRowCapacity int32) *proto.CinemahallRequest {
-//	cinema := &proto.CinemahallRequest{
-//		Name:            name,
-//		SeatRows:        SeatRows,
-//		SeatRowCapacity: SeatRowCapacity,
-//	}
-//	return cinema
-//}
-//
+import (
+	"blatt-4-consal/proto"
+	movieservice "blatt-4-consal/services/movieservice/microservice"
+	reservationservice "blatt-4-consal/services/reservationservice/microservice"
+	showservice "blatt-4-consal/services/showservice/microservice"
+	userservice "blatt-4-consal/services/userservice/microservice"
+	"context"
+	"fmt"
+	"github.com/micro/go-micro/client"
+	"github.com/stretchr/testify/assert"
+	"testing"
+	"time"
+)
+
+var cli client.Client
+var tmpContext context.Context
+var cancel context.CancelFunc
+var cinemahall proto.CinemahallService
+var movie proto.MovieService
+var show proto.ShowService
+
+func TestCinemahall (t *testing.T) {
+	tmpContext, cancel = context.WithCancel(context.Background())
+	go StartCinemaService(tmpContext,true)
+	time.Sleep(500 * time.Millisecond)
+	go showservice.StartShowService(tmpContext,true)
+	time.Sleep(500 * time.Millisecond)
+	go movieservice.StartMovieService(tmpContext,true)
+	time.Sleep(500 * time.Millisecond)
+	go reservationservice.StartReservationService(tmpContext,true)
+	time.Sleep(500 * time.Millisecond)
+	go userservice.StartUserService(tmpContext,true)
+
+	var cli client.Client
+
+	fmt.Println("Starting Cinemahall Microservice")
+	cinemahall = proto.NewCinemahallService("cinemahall", cli)
+	show = proto.NewShowService("show", cli)
+	movie = proto.NewMovieService("movie", cli)
+
+	// test Add Cinema
+	//req1 := getNewCinemahall("testCinemaFirst", 4, 4)
+	req1 := getNewCinemahall("testcinemafirst",4,10)
+	rsp,err := cinemahall.AddCinemahall(tmpContext,req1)
+	assert.Nil(t,err)
+	assert.True(t,rsp.Success)
+}
+
+func getNewCinemahall(name string, SeatRows int32, SeatRowCapacity int32) *proto.CinemahallRequest {
+	cinema := &proto.CinemahallRequest{
+		Name:            name,
+		SeatRows:        SeatRows,
+		SeatRowCapacity: SeatRowCapacity,
+	}
+	return cinema
+}
+
 //func getCinemahallForDelete(name string) *proto.CinemahallRequest {
 //	cinema := &proto.CinemahallRequest{
 //		Name: name,
@@ -131,7 +107,7 @@ package microservice
 //	assert.Nil(t, err3)
 //	assert.False(t, res3.Success)
 //}
-//
+
 //func TestDeleteAddCinemahall(t *testing.T) {
 //
 //	request1 := getNewCinemahall("kino4", 5, 5)
@@ -159,11 +135,11 @@ package microservice
 //	assert.Nil(t, err4)
 //	assert.True(t, res4.Success)
 //}
-//
-//func sleep() {
-//	time.Sleep(1000 * time.Millisecond)
-//}
-//
-//func fix() {
-//	cinemahall.GetCinemahalls(tmpContext, &proto.Request{})
-//}
+
+func sleep() {
+	time.Sleep(1000 * time.Millisecond)
+}
+
+func fix() {
+	cinemahall.GetCinemahalls(tmpContext, &proto.Request{})
+}

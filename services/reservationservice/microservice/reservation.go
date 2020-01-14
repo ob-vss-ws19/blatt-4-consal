@@ -178,7 +178,7 @@ func makeFailedResponse(res *proto.Response, message string) error {
 }
 
 // Start Service for reservation class
-func StartReservationService(context context.Context) {
+func StartReservationService(context context.Context, isTest bool) {
 	// Create a new Service. Add name address and context
 	service := micro.NewService(
 		micro.Name("reservation"),
@@ -186,8 +186,9 @@ func StartReservationService(context context.Context) {
 		micro.Context(context),
 	)
 	// Init will parse the command line flags
-	service.Init()
-	// Register handler
+	if !isTest {
+		service.Init()
+	}	// Register handler
 	proto.RegisterReservationHandler(service.Server(), new(Reservation))
 	fmt.Println("Reservation Service starting...")
 	// Run the Server

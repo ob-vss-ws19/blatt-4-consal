@@ -72,7 +72,7 @@ func makeFailedResponse(res *proto.Response, message string) error {
 	return nil
 }
 
-func StartUserService(context context.Context) {
+func StartUserService(context context.Context, isTest bool) {
 	//Create a new Service. Add name address and context
 	service := micro.NewService(
 		micro.Name("user"),
@@ -80,8 +80,9 @@ func StartUserService(context context.Context) {
 		micro.Context(context),
 	)
 	// Init will parse the command line flags
-	service.Init()
-	//Register handler
+	if !isTest {
+		service.Init()
+	}	//Register handler
 	proto.RegisterUserHandler(service.Server(), new(User))
 	fmt.Println("User Service starting...")
 	//Run the Server

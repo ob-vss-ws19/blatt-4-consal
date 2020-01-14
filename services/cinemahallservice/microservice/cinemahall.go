@@ -84,7 +84,7 @@ func makeFailedResponse(res *proto.Response, message string) error {
 }
 
 //Start Service for cinema class
-func StartCinemaService(context context.Context) {
+func StartCinemaService(context context.Context, isTest bool) {
 	//Create a new Service. Include name, version, address and context
 	service := micro.NewService(
 		micro.Name("cinemahall"),
@@ -92,7 +92,9 @@ func StartCinemaService(context context.Context) {
 		micro.Context(context), //needed
 	)
 	// Init will parse the command line flags
-	service.Init()
+	if !isTest {
+		service.Init()
+	}
 	//Register handler
 	proto.RegisterCinemahallHandler(service.Server(), new(Cinemahall))
 	fmt.Println("Cinemahall Service starting...")

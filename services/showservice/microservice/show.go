@@ -116,7 +116,7 @@ func makeFailedResponse(res *proto.Response, message string) error {
 }
 
 //Start Service for Show class
-func StartShowService(context context.Context) {
+func StartShowService(context context.Context, isTest bool) {
 	//Create a new Service. Add name address and context
 	service := micro.NewService(
 		micro.Name("show"),
@@ -124,8 +124,9 @@ func StartShowService(context context.Context) {
 		micro.Context(context),
 	)
 	// Init will parse the command line flags
-	service.Init()
-	//Register handler
+	if !isTest {
+		service.Init()
+	}	//Register handler
 	proto.RegisterShowHandler(service.Server(), new(Show))
 	fmt.Println("Show Service starting...")
 	//Run the Server
