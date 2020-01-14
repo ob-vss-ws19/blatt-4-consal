@@ -8,11 +8,11 @@ pipeline {
             steps {
                 sh 'echo build'
                 sh 'cd cli && go build client.go'
-                sh 'cd services/userservice && go build client.go'
-                sh 'cd services/movieservice && go build client.go'
-                sh 'cd services/cinemahallservice && go build client.go'
-                sh 'cd services/showservice && go build client.go'
-                sh 'cd services/reservationservice && go build client.go'
+                sh 'cd services/userservice && go build main.go'
+                sh 'cd services/movieservice && go build main.go'
+                sh 'cd services/cinemahallservice && go build main.go'
+                sh 'cd services/showservice && go build main.go'
+                sh 'cd services/reservationservice && go build main.go'
             }
         }
         stage('Test') {
