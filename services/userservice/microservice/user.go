@@ -72,7 +72,7 @@ func makeFailedResponse(res *proto.Response, message string) error {
 	return nil
 }
 
-func StartUserService(context context.Context, port int64) {
+func StartUserService(context context.Context) {
 	//Create a new Service. Add name address and context
 	service := micro.NewService(
 		micro.Name("user"),

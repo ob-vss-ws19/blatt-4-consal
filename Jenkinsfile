@@ -43,8 +43,6 @@ pipeline {
                 sh "docker-build-and-push -b ${BRANCH_NAME} -s showservice -f services/showservice/Dockerfile"
                 sh "docker-build-and-push -b ${BRANCH_NAME} -s reservationservice -f services/reservationservice/Dockerfile"
                 sh "docker-build-and-push -b ${BRANCH_NAME} -s client -f client.dockerfile"
-                sh "docker-build-and-push -b ${BRANCH_NAME} -s services -f services.dockerfile"
-
             }
         }
     }

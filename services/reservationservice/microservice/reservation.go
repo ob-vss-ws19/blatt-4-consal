@@ -178,7 +178,7 @@ func makeFailedResponse(res *proto.Response, message string) error {
 }
 
 // Start Service for reservation class
-func StartReservationService(context context.Context, port int64) {
+func StartReservationService(context context.Context) {
 	// Create a new Service. Add name address and context
 	service := micro.NewService(
 		micro.Name("reservation"),
