@@ -1,10 +1,10 @@
 # Reservierungssystem für ein Kino mit Microservices
 
 ## Funktionsbeschreibung
-Es befinden sich 6 Microservices, die in user, movie, cinemahall, showing, reservation und client aufgeteilt sind.
-Die Kommunikation der Microservices wird über micro bereitgestellt.
-Die Services können alle entweder einzeln oder über 'startServicesLocal.sh' gestartet werden.
-Zudem ist es möglich, über 'startServicesDocker' die aktuellsten Dockercontainer aus develop auszuführen.
+Es befinden sich 5 Microservices, die in `user, movie, cinemahall, showing` und `reservation` aufgeteilt sind.
+Um auf die Microservices über die Kommandozeile zu benutzen, verwendet man den `client`.
+Die Services können alle entweder einzeln oder über `startServicesLocal.sh` gestartet werden.
+Zudem ist es möglich, über `startServicesDocker` die aktuellsten Dockercontainer aus develop auszuführen.
 
 Die Kommunikation zwischen den Microservices wird [hier](https://github.com/ob-vss-ws19/blatt-4-consal/blob/development/Protocol.md) genauer erklärt.
 ## Let's Start!
@@ -61,7 +61,7 @@ Die Kommunikation zwischen den Microservices wird [hier](https://github.com/ob-v
 
 ## CLI-Commands
 
--   Über den Client können jedem Service `cinema, movie, reservation showing` und `user` Daten hinzugefügt `add`, gelöscht `delete` und aufgelistet `get` werden.
+-   Über den Client können jedem Service `user, movie, cinemahall, showing` und `reservation` Daten hinzugefügt `add`, gelöscht `delete` und aufgelistet `get` werden.
 Einzige Ausnahme bietet hierbei reservation, hier ist es nicht möglich einfach eine Reservierung hinzuzufügen, diese muss zunächst beantragt `check` werden und anschließend gebucht `make`.
 
 ### Befehlausführung

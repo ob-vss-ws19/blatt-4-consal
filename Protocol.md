@@ -23,9 +23,11 @@ Beispielsweise wäre dies eine Antwort, als alle Reservationen an den Client als
 
     var allReservations string
 
-[...]
+    [...]
 
     res.Success = true
     res.Message = allReservations
 
+### Aufbau der Services
 
+die Services
