@@ -28,6 +28,11 @@ Beispielsweise wäre dies eine Antwort, als alle Reservationen an den Client als
     res.Success = true
     res.Message = allReservations
 
-### Aufbau der Services
+### Aufbau und Regeln der Services
 
-die Services
+Objekte in Services `user`, `movie` und `cinemahall` können unabhängig von anderen Microservices erstellt werden.
+
+Um einen Eintrag in `show` zu erzeugen, muss mindestens ein `movie` und ein `cinemahall` vorhanden sein.
+
+Um einen Eintrag in `reservation` zu erzeugen, muss mindestens ein `show` und ein `user` vorhanden sein.
+

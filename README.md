@@ -76,8 +76,8 @@ oder
 
 - alle Befehle
 ```
-Services: us, mv, cm, sw, rv
-Functions: add, delete, get, ...
+Services:   us [user], mv [movie], cm [cinemahall], sw [show], rv[reservation]
+Functions:  add, delete, get, ...
 
 us
     Functions:
