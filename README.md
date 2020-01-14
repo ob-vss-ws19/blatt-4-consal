@@ -32,7 +32,7 @@ Zudem ist es möglich, über 'startServicesDocker' die aktuellsten Dockercontain
     ./startServicesLocal.sh
     ```
 
-  Starten der Services Über Dockercontainer
+-  Starten der Services Über Dockercontainer
 
     ```
     ./startServicesDocker.sh
