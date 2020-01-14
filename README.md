@@ -1,12 +1,12 @@
-# Reservierungssystem für ein Kino
+# Reservierungssystem für ein Kino mit Microservices
 
-## Beschreibung
+## Funktionsbeschreibung
 Es befinden sich 6 Microservices, die in user, movie, cinemahall, showing, reservation und client aufgeteilt sind.
 Die Kommunikation der Microservices wird über micro bereitgestellt.
 Die Services können alle entweder einzeln oder über 'startServicesLocal.sh' gestartet werden.
 Zudem ist es möglich, über 'startServicesDocker' die aktuellsten Dockercontainer aus develop auszuführen.
 
-## Ho to run the services
+## Let's Start!
 
 -   das Github Repository klonen:
 
@@ -63,7 +63,7 @@ Zudem ist es möglich, über 'startServicesDocker' die aktuellsten Dockercontain
 -   Über den Client können jedem Service `cinema, movie, reservation showing` und `user` Daten hinzugefügt `add`, gelöscht `delete` und aufgelistet `get` werden.
 Einzige Ausnahme bietet hierbei reservation, hier ist es nicht möglich einfach eine Reservierung hinzuzufügen, diese muss zunächst beantragt `check` werden und anschließend gebucht `make`.
 
-## Befehlausführung
+### Befehlausführung
 
     ./client [Service] [Function] [Parameter]
 
@@ -73,7 +73,7 @@ oder
     docker run terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-4-consal:PR-3-client [Service] [Function] [Parameter]
 
 
-
+- alle Befehle
 ```
 Services: us, mv, cm, sw, rv
 Functions: add, delete, get, ...
