@@ -5,7 +5,7 @@ Die Microservices kommunizieren über messages, die von `go/micro` gehandelt wer
 
 ### Request an ein Microservice
 
-Wenn der Service über `micro.NewService` mit den Namen `reservation` und einer leeren Context `context.TODO()` initialisiert und gestartet wurde,
+Wenn der Service über `micro.NewService` mit dem Namen `reservation` und einem leeren Context `context.TODO()` initialisiert und gestartet wurde,
 kann man mit
 
     var client client.Client
