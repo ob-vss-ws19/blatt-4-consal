@@ -17,6 +17,7 @@ func (mv *Movie) AddMovie(context context.Context, req *proto.MovieRequest, res 
 		return makeFailedResponse(res, fmt.Sprintf("#ADD_MOVIE_FAIL: Movie %s does exist", req.MovieTitle))
 	}
 	movies[req.MovieTitle] = true // value type is not specified
+	fmt.Println(req.MovieTitle)
 	return makeResponse(res, fmt.Sprintf("#ADD_MOVIE: Movie %s added", req.MovieTitle))
 }
 

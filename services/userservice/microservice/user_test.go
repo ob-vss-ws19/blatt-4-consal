@@ -75,8 +75,9 @@ func printInfo(microservicename string) {
 }
 
 func TestUser_AddUser(t *testing.T) {
+	testnum := "1"
 	user = proto.NewUserService("user", cli)
-	req1 := &proto.UserRequest{Name: "user1"}
+	req1 := &proto.UserRequest{Name: "user" + testnum}
 
 	fix()
 	res1, err := user.AddUser(context.TODO(), req1)
@@ -86,8 +87,9 @@ func TestUser_AddUser(t *testing.T) {
 }
 
 func TestUser_AddDoubleUser(t *testing.T) {
+	testnum := "2"
 	user = proto.NewUserService("user", cli)
-	req1 := &proto.UserRequest{Name: "user2"}
+	req1 := &proto.UserRequest{Name: "user" + testnum}
 
 	fix()
 	res1, err1 := user.AddUser(context.TODO(), req1)
@@ -101,8 +103,9 @@ func TestUser_AddDoubleUser(t *testing.T) {
 }
 
 func TestUser_AddTripleUser(t *testing.T) {
+	testnum := "3"
 	user = proto.NewUserService("user", cli)
-	req1 := &proto.UserRequest{Name: "user3"}
+	req1 := &proto.UserRequest{Name: "user" + testnum}
 
 	fix()
 	res1, err1 := user.AddUser(context.TODO(), req1)
@@ -120,15 +123,16 @@ func TestUser_AddTripleUser(t *testing.T) {
 }
 
 func TestUser_DeleteUser_WithoutReservation(t *testing.T) {
+	testnum := "4"
 	user = proto.NewUserService("user", cli)
 
-	us := "user5"
+	us := "user" + testnum
 
-	user5 := &proto.UserRequest{Name: us}
+	user4 := &proto.UserRequest{Name: us}
 
 	fix()
-	res1, err1 := user.AddUser(context.TODO(), user5)
-	res2, err2 := user.DeleteUser(context.TODO(), user5)
+	res1, err1 := user.AddUser(context.TODO(), user4)
+	res2, err2 := user.DeleteUser(context.TODO(), user4)
 
 	assert.Nil(t, err1)
 	assert.True(t, res1.Success)
@@ -138,34 +142,35 @@ func TestUser_DeleteUser_WithoutReservation(t *testing.T) {
 }
 
 func TestUser_DeleteUser_WithReservation(t *testing.T) {
+	testnum := "5"
 	user = proto.NewUserService("user", cli)
 	movie = proto.NewMovieService("movie", cli)
 	cinemahall = proto.NewCinemahallService("cinemahall", cli)
 	show = proto.NewShowService("show", cli)
 	reservation = proto.NewReservationService("reservation", cli)
 
-	us := "user4"
-	mv := "movie4"
-	cm := "cinemahall4"
+	us := "user" + testnum
+	mv := "movie" + testnum
+	cm := "cinemahall" + testnum
 
-	user4 := &proto.UserRequest{Name: us}
-	movie4 := &proto.MovieRequest{MovieTitle: mv}
-	cinemahall4 := &proto.CinemahallRequest{Name: cm, SeatRows: 10, SeatRowCapacity: 10}
-	show4 := &proto.ShowRequest{CinemaHall: cm, Movie: mv}
-	checkReservation4 := &proto.ReservationRequest{UserName: us, Show: 1, Seats: 5}
-	makeReservation4 := &proto.ReservationRequest{ReservationId: 1}
-	deleteReservation4 := &proto.ReservationRequest{ReservationId: 1}
+	user5 := &proto.UserRequest{Name: us}
+	movie5 := &proto.MovieRequest{MovieTitle: mv}
+	cinemahall5 := &proto.CinemahallRequest{Name: cm, SeatRows: 10, SeatRowCapacity: 10}
+	show5 := &proto.ShowRequest{CinemaHall: cm, Movie: mv}
+	checkReservation5 := &proto.ReservationRequest{UserName: us, Show: 1, Seats: 5}
+	makeReservation5 := &proto.ReservationRequest{ReservationId: 1}
+	deleteReservation5 := &proto.ReservationRequest{ReservationId: 1}
 
 	fix()
-	movie.AddMovie(context.TODO(), movie4)
-	cinemahall.AddCinemahall(context.TODO(), cinemahall4)
-	show.AddShow(context.TODO(), show4)
-	reservation.ReservationInquiry(context.TODO(), checkReservation4)
-	reservation.MakeReservation(context.TODO(), makeReservation4)
+	movie.AddMovie(context.TODO(), movie5)
+	cinemahall.AddCinemahall(context.TODO(), cinemahall5)
+	show.AddShow(context.TODO(), show5)
+	reservation.ReservationInquiry(context.TODO(), checkReservation5)
+	reservation.MakeReservation(context.TODO(), makeReservation5)
 
-	res1, err1 := user.AddUser(context.TODO(), user4)
-	res2, err2 := user.DeleteUser(context.TODO(), user4)
-	res3, err3 := reservation.DeleteReservation(context.TODO(), deleteReservation4)
+	res1, err1 := user.AddUser(context.TODO(), user5)
+	res2, err2 := user.DeleteUser(context.TODO(), user5)
+	res3, err3 := reservation.DeleteReservation(context.TODO(), deleteReservation5)
 
 	assert.Nil(t, err1)
 	assert.True(t, res1.Success)
