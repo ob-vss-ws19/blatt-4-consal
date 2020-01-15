@@ -45,6 +45,10 @@ func TestMovie(t *testing.T) {
 	assert.Nil(t, err1);
 	assert.True(t, rsp1.Success)
 
+	// add first movie again -> error
+	rsp2,err2 := movie.AddMovie(tmpContext,req1);
+	assert.Nil(t, err2)
+	assert.False(t,rsp2.Success)
 }
 
 func getNewMovie(name string, ) *proto.MovieRequest {

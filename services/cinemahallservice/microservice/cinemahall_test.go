@@ -63,11 +63,22 @@ func TestCinemahall(t *testing.T) {
 	assert.Nil(t, err4)
 	assert.Len(t, rsp4.Value, 2)
 
+	//// test Add movie to cinemahall
+	//movieReq := &proto.MovieRequest{MovieTitle: "Herr der Ringe"}
+	//rspAddMovie,err5 := movie.AddMovie(tmpContext,movieReq)
+	//assert.Nil(t, err5)
+	//assert.True(t,rspAddMovie.Success)
+
 	// delete cinema 1
-	deleteReq := &proto.CinemahallRequest{Name: "testcinemafirst"}
-	deleteRsp, err5 := cinemahall.DeleteCinemahall(tmpContext, deleteReq)
+	deleteReq:= &proto.CinemahallRequest{Name:"testcinemafirst"}
+	deleteRsp,err5 := cinemahall.DeleteCinemahall(tmpContext,deleteReq)
 	assert.Nil(t, err5)
-	assert.True(t, deleteRsp.Success)
+	assert.True(t,deleteRsp.Success)
+
+	//// get cinemas -> expect 1
+	//getCinemasRsp,err6 := cinemahall.GetCinemahalls(tmpContext,emptyReq)
+	//assert.Nil(t, err6)
+	//assert.Len(t,getCinemasRsp.Value,1)
 
 }
 
