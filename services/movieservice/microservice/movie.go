@@ -27,7 +27,7 @@ func (mv *Movie) DeleteMovie(ctx context.Context, req *proto.MovieRequest, res *
 	//create Show service client and delete corresponding shows
 	deleteCorrespondingShows(req.MovieTitle)
 	delete(movies, req.MovieTitle)
-	return makeResponse(res, fmt.Sprintf("#DELETE_MOVIE: User %s deleted successfully", req.MovieTitle))
+	return makeResponse(res, fmt.Sprintf("#DELETE_MOVIE: Movie %s deleted successfully", req.MovieTitle))
 }
 
 func deleteCorrespondingShows(movieTitle string) {

@@ -73,6 +73,7 @@ func (rv *Reservation) DeleteReservation(ctx context.Context, req *proto.Reserva
 	if _, exists := rv.reservations[req.ReservationId]; !exists {
 		return makeFailedResponse(res, fmt.Sprintf("#DELETE_RESERV_FAIL: Reservation with the ID %d doens't exist.", req.ReservationId))
 	}
+	fmt.Println(req.ReservationId)
 	delete(rv.reservations, req.ReservationId)
 	return makeResponse(res, fmt.Sprintf("#DELETE_RESERV: Reservation with the ID %d has been deleted.", req.ReservationId))
 }

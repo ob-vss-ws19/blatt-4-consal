@@ -2,7 +2,7 @@
 
 ## Funktionsbeschreibung
 Es befinden sich 5 Microservices, die in `user, movie, cinemahall, showing` und `reservation` aufgeteilt sind.
-Um auf die Microservices über die Kommandozeile zu benutzen, verwendet man den `client`.
+Um auf die Microservices über die Kommandozeile zuzugreifen, verwendet man den `client`.
 Die Services können alle entweder einzeln oder über `startServicesLocal.sh` gestartet werden.
 Zudem ist es möglich, über `startServicesDocker` die aktuellsten Dockercontainer aus develop auszuführen.
 
