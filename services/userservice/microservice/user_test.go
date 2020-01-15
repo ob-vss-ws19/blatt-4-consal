@@ -30,9 +30,8 @@ func StartService(microservicename string) {
 	}
 }
 
-func TestUser(t *testing.T) {
+func TestUser_AddUser(t *testing.T) {
 	user = proto.NewUserService("user", cli)
-
 	req1 := &proto.UserRequest{
 		Name: "user1",
 	}
