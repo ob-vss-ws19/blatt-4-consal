@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package proto;
+
+service Cinemahall {
+    rpc AddCinemahall (CinemahallRequest) returns (Response) {
+    }
+    rpc DeleteCinemahall (CinemahallRequest) returns (Response) {
+    }
+    rpc GetCinemahalls (Request) returns (CinemahallResponse) {
+    }
+}
+
+message CinemahallRequest {
+    string name = 1;
+    int32 seatRows = 2;
+    int32 seatRowCapacity = 3;
+}
+
+message CinemahallResponse {
+    repeated CinemahallRequest Value = 1;
+}
+
+service Movie {
+    rpc AddMovie (MovieRequest) returns (Response) {
+    }
+    rpc DeleteMovie (MovieRequest) returns (Response) {
+    }
+    rpc GetMovies (Request) returns (MovieResponse) {
+    }
+}
+
+message MovieRequest {
+    string movieTitle = 1;
+}
+
+message MovieResponse {
+    repeated MovieRequest Value = 1;
+}
+
+service Reservation {
+    rpc MakeReservation (ReservationRequest) returns (Response) {
+    }
+    rpc DeleteReservation (ReservationRequest) returns (Response) {
+    }
+    rpc ReservationInquiry (ReservationRequest) returns (Response) {
+    }
+    rpc GetReservations (Request) returns (ReservationResponse) {
+    }
+}
+
+message ReservationRequest {
+    string userName = 1;
+    int32 reservationId = 2;
+    int32 show = 3; //verknüpfung von Kinosaal und Film
+    int32 seats = 4;
+    bool reserved = 5;
+}
+
+message ReservationResponse {
+    repeated ReservationRequest Value = 1;
+}
+
+service Show {
+    rpc AddShow (ShowRequest) returns (Response) {
+    }
+    rpc DeleteShow (ShowRequest) returns (Response) {
+    }
+    rpc GetShows (Request) returns (ShowResponse) {
+    }
+}
+
+message ShowRequest {
+    int32 id = 1;
+    string cinemaHall = 2;
+    string movie = 3;
+}
+
+message ShowResponse {
+    repeated ShowRequest Value = 1;
+}
+
+service User {
+    rpc AddUser (UserRequest) returns (Response) {
+    }
+    rpc DeleteUser (UserRequest) returns (Response) {
+    }
+    rpc GetUsers (Request) returns (UserResponse) {
+    }
+}
+
+message UserRequest {
+    string name = 1; //Reservation und User verknüpfung mittels user name
+}
+
+message UserResponse {
+    repeated UserRequest Value = 1;
+}
+
+//--------------------------------------------------------
+
+//Standard message for Requests
+message Request {
+}
+
+//Standard message for Response
+message Response {
+    bool success = 1;
+    string message = 2;
+}
