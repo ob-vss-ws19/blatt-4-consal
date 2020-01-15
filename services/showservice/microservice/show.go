@@ -23,7 +23,7 @@ func (*Show) AddShow(context context.Context, req *proto.ShowRequest, res *proto
 		return makeFailedResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Movie %s doesn't exist yet", req.Movie))
 	}
 	if !doesCinemahallExist(req.CinemaHall) {
-		return makeFailedResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Cinemahall %s doesn't exist yet", req.Movie))
+		return makeFailedResponse(res, fmt.Sprintf("#SHOW_ADD_FAIL: Cinemahall %s doesn't exist yet", req.CinemaHall))
 	}
 	Shows[Id] = &ShowRequest{Movie: req.Movie, Cinemahall: req.CinemaHall}
 	makeResponse(res, fmt.Sprintf("#SHOW_ADD: New Show with ID %d in Cinema %s with Movie Title %s added", Id, req.CinemaHall, req.Movie))
@@ -37,7 +37,7 @@ func (*Show) DeleteShow(context context.Context, req *proto.ShowRequest, res *pr
 	}
 	// create Reservation service client and delete corresponding Reservations
 	// delete cinemahall from map
-	// deleteCorrespondingReservations(req.Id)
+	deleteCorrespondingReservations(req.Id)
 	delete(Shows, req.Id)
 	return makeResponse(res, fmt.Sprintf("#DELETE_MOVIE: Show with id %d deleted successfully", req.Id))
 }

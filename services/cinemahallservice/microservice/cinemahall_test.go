@@ -132,8 +132,8 @@ func TestCinemahall_DeleteCinemahall_WithoutShow(t *testing.T) {
 
 	cm := "cinemahall" + testnum
 
-	addCinemahall4 := &proto.CinemahallRequest{Name: cm + testnum, SeatRows: seatnum, SeatRowCapacity: seatnum}
-	deleteCinemahall4 := &proto.CinemahallRequest{Name: cm + testnum}
+	addCinemahall4 := &proto.CinemahallRequest{Name: cm, SeatRows: seatnum, SeatRowCapacity: seatnum}
+	deleteCinemahall4 := &proto.CinemahallRequest{Name: cm}
 
 	fix()
 	res1, err1 := cinemahall.AddCinemahall(context.TODO(), addCinemahall4)
@@ -156,8 +156,8 @@ func TestCinemahall_DeleteCinemahall_WithShow(t *testing.T) {
 	cm := "cinemahall" + testnum
 	mv := "movie" + testnum
 
-	addCinemahall5 := &proto.CinemahallRequest{Name: cm + testnum, SeatRows: seatnum, SeatRowCapacity: seatnum}
-	deleteCinemahall5 := &proto.CinemahallRequest{Name: cm + testnum}
+	addCinemahall5 := &proto.CinemahallRequest{Name: cm, SeatRows: seatnum, SeatRowCapacity: seatnum}
+	deleteCinemahall5 := &proto.CinemahallRequest{Name: cm}
 	movie5 := &proto.MovieRequest{MovieTitle: mv}
 	show5 := &proto.ShowRequest{CinemaHall: cm, Movie: mv}
 	deleteShow5 := &proto.ShowRequest{Id: 1}
