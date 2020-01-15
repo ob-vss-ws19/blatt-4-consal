@@ -21,17 +21,17 @@ var cinemahall proto.CinemahallService
 var movie proto.MovieService
 var show proto.ShowService
 
-func TestCinemahall (t *testing.T) {
+func TestCinemahall(t *testing.T) {
 	tmpContext, cancel = context.WithCancel(context.Background())
-	go StartCinemaService(tmpContext,true)
+	go StartCinemaService(tmpContext, true)
 	time.Sleep(500 * time.Millisecond)
-	go showservice.StartShowService(tmpContext,true)
+	go showservice.StartShowService(tmpContext, true)
 	time.Sleep(500 * time.Millisecond)
-	go movieservice.StartMovieService(tmpContext,true)
+	go movieservice.StartMovieService(tmpContext, true)
 	time.Sleep(500 * time.Millisecond)
-	go reservationservice.StartReservationService(tmpContext,true)
+	go reservationservice.StartReservationService(tmpContext, true)
 	time.Sleep(500 * time.Millisecond)
-	go userservice.StartUserService(tmpContext,true)
+	go userservice.StartUserService(tmpContext, true)
 
 	var cli client.Client
 
@@ -40,12 +40,35 @@ func TestCinemahall (t *testing.T) {
 	show = proto.NewShowService("show", cli)
 	movie = proto.NewMovieService("movie", cli)
 
-	// test Add Cinema
-	//req1 := getNewCinemahall("testCinemaFirst", 4, 4)
-	req1 := getNewCinemahall("testcinemafirst",4,10)
-	rsp,err := cinemahall.AddCinemahall(tmpContext,req1)
-	assert.Nil(t,err)
-	assert.True(t,rsp.Success)
+	// test Add Cinema first
+	req1 := getNewCinemahall("testcinemafirst", 4, 10)
+	rsp1, err1 := cinemahall.AddCinemahall(tmpContext, req1)
+	assert.Nil(t, err1)
+	assert.True(t, rsp1.Success)
+
+	// test Add Cinema second
+	req2 := getNewCinemahall("testcinemasecond", 4, 8)
+	rsp2, err2 := cinemahall.AddCinemahall(tmpContext, req2)
+	assert.Nil(t, err2)
+	assert.True(t, rsp2.Success)
+
+	// test Add Cinema first again -> error
+	rsp3, err3 := cinemahall.AddCinemahall(tmpContext, req1)
+	assert.Nil(t, err3)
+	assert.False(t, rsp3.Success)
+
+	// check if Cinemas are added
+	emptyReq := &proto.Request{}
+	rsp4, err4 := cinemahall.GetCinemahalls(tmpContext, emptyReq)
+	assert.Nil(t, err4)
+	assert.Len(t, rsp4.Value, 2)
+
+	// delete cinema 1
+	deleteReq := &proto.CinemahallRequest{Name: "testcinemafirst"}
+	deleteRsp, err5 := cinemahall.DeleteCinemahall(tmpContext, deleteReq)
+	assert.Nil(t, err5)
+	assert.True(t, deleteRsp.Success)
+
 }
 
 func getNewCinemahall(name string, SeatRows int32, SeatRowCapacity int32) *proto.CinemahallRequest {
@@ -56,85 +79,6 @@ func getNewCinemahall(name string, SeatRows int32, SeatRowCapacity int32) *proto
 	}
 	return cinema
 }
-
-//func getCinemahallForDelete(name string) *proto.CinemahallRequest {
-//	cinema := &proto.CinemahallRequest{
-//		Name: name,
-//	}
-//	return cinema
-//}
-//
-//func TestCreateCinemahall(t *testing.T) {
-//	request1 := getNewCinemahall("kino1", 5, 5)
-//	sleep()
-//	res, err := cinemahall.AddCinemahall(tmpContext, request1)
-//
-//	assert.Nil(t, err)
-//	assert.True(t, res.Success)
-//}
-//
-//func TestCreateDoubleCinemahall(t *testing.T) {
-//	request1 := getNewCinemahall("kino2", 5, 5)
-//	sleep()
-//	res1, err1 := cinemahall.AddCinemahall(tmpContext, request1)
-//	sleep()
-//	res2, err2 := cinemahall.AddCinemahall(tmpContext, request1)
-//
-//	assert.Nil(t, err1)
-//	assert.True(t, res1.Success)
-//
-//	assert.Nil(t, err2)
-//	assert.False(t, res2.Success)
-//	cancel()
-//}
-//
-//func TestCreateTripleCinemahall(t *testing.T) {
-//
-//	request1 := getNewCinemahall("kino3", 5, 5)
-//	sleep()
-//	res1, err1 := cinemahall.AddCinemahall(tmpContext, request1)
-//	sleep()
-//	res2, err2 := cinemahall.AddCinemahall(tmpContext, request1)
-//	sleep()
-//	res3, err3 := cinemahall.AddCinemahall(tmpContext, request1)
-//
-//	assert.Nil(t, err1)
-//	assert.True(t, res1.Success)
-//
-//	assert.Nil(t, err2)
-//	assert.False(t, res2.Success)
-//
-//	assert.Nil(t, err3)
-//	assert.False(t, res3.Success)
-//}
-
-//func TestDeleteAddCinemahall(t *testing.T) {
-//
-//	request1 := getNewCinemahall("kino4", 5, 5)
-//	request2 := getCinemahallForDelete("kino4")
-//	request3 := &proto.MovieRequest{
-//		MovieTitle: "film4",
-//	}
-//	request4 := &proto.ShowRequest{
-//		CinemaHall: "kino4",
-//		Movie:      "film4",
-//	}
-//	sleep()
-//	res1, err1 := cinemahall.AddCinemahall(tmpContext, request1)
-//	sleep()
-//	movie.AddMovie(tmpContext, request3)
-//	sleep()
-//	show.AddShow(tmpContext, request4)
-//	sleep()
-//	res4, err4 := cinemahall.DeleteCinemahall(tmpContext, request2)
-//	sleep()
-//
-//	assert.Nil(t, err1)
-//	assert.True(t, res1.Success)
-//
-//	assert.Nil(t, err4)
-//	assert.True(t, res4.Success)
-//}
 
 func sleep() {
 	time.Sleep(1000 * time.Millisecond)

@@ -6,7 +6,6 @@ import (
 	reservationservice "blatt-4-consal/services/reservationservice/microservice"
 	showservice "blatt-4-consal/services/showservice/microservice"
 	userservice "blatt-4-consal/services/userservice/microservice"
-
 	"context"
 	"github.com/micro/go-micro/client"
 	"github.com/stretchr/testify/assert"
@@ -20,8 +19,6 @@ var cancel context.CancelFunc
 var cinemahall proto.CinemahallService
 var movie proto.MovieService
 var show proto.ShowService
-var reservation proto.ReservationService
-var user proto.UserService
 
 func TestMovie(t *testing.T) {
 	tmpContext, cancel = context.WithCancel(context.Background())
@@ -38,17 +35,21 @@ func TestMovie(t *testing.T) {
 
 	var cli client.Client
 
-	//cinemahall := proto.NewCinemaService("cinema",cli)
-	movie := proto.NewMovieService("movie",cli)
-	//showing := proto.NewShowingService("showing",cli)
+	//cinemahall := proto.NewCinemahallService("cinema",cli)
+	//show := proto.NewShowService("showing",cli)
+	movie := proto.NewMovieService("movie", cli)
 
-	//add movie 1
-	req1 := &proto.MovieRequest{MovieTitle: "Herr der Ringe"}
-	rsp, err := movie.AddMovie(context.TODO(), req1)
-	assert.Nil(t, err);
-	assert.True(t,rsp.Success)
+	//add first movie
+	req1 := getNewMovie("Herr der Ringe")
+	rsp1, err1 := movie.AddMovie(tmpContext, req1)
+	assert.Nil(t, err1);
+	assert.True(t, rsp1.Success)
 
+}
 
-
-
+func getNewMovie(name string, ) *proto.MovieRequest {
+	movie := &proto.MovieRequest{
+		MovieTitle: name,
+	}
+	return movie
 }
