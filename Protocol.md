@@ -30,6 +30,8 @@ Beispielsweise wäre dies eine Antwort, als alle Reservationen an den Client als
 
 ### Aufbau und Regeln der Services
 
+<img src="https://github.com/ob-vss-ws19/blatt-4-consal/blob/development/Blatt4%20(2).png" alt="Blatt4 Ueberblick"/>
+
 Objekte in Services `user`, `movie` und `cinemahall` können unabhängig von anderen Microservices erstellt werden.
 
 Um einen Eintrag in `show` zu erzeugen, muss mindestens ein `movie` und ein `cinemahall` vorhanden sein.
