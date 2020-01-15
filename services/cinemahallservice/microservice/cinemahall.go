@@ -4,7 +4,6 @@ import (
 	"blatt-4-consal/proto"
 	"context"
 	"fmt"
-	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/client"
 )
 
@@ -81,26 +80,4 @@ func makeFailedResponse(res *proto.Response, message string) error {
 	res.Success = false
 	res.Message = message
 	return nil
-}
-
-//Start Service for cinema class
-func StartCinemaService(context context.Context, isTest bool) {
-	//Create a new Service. Include name, version, address and context
-	service := micro.NewService(
-		micro.Name("cinemahall"),
-		micro.Version("latest"),
-		micro.Context(context), //needed
-	)
-	// Init will parse the command line flags
-	if !isTest {
-		service.Init()
-	}
-	//Register handler
-	proto.RegisterCinemahallHandler(service.Server(), new(Cinemahall))
-	fmt.Println("Cinemahall Service starting...")
-	//Run the Server
-	if err := service.Run(); err != nil {
-		//Print error message if there is any
-		fmt.Println(err)
-	}
 }
