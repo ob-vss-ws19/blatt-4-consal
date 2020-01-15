@@ -18,6 +18,10 @@ import (
 
 var cli client.Client
 var user proto.UserService
+var movie proto.MovieService
+var cinemahall proto.CinemahallService
+var show proto.ShowService
+var reservation proto.ReservationService
 var mux sync.RWMutex
 
 func init() {
@@ -25,10 +29,11 @@ func init() {
 	time.Sleep(1 * time.Second)
 	go StartService("movie", 3001)
 	time.Sleep(1 * time.Second)
-
 	go StartService("cinemahall", 3002)
-	//go StartService("show")
-	//go StartService("reservation")
+	time.Sleep(1 * time.Second)
+	go StartService("show", 3003)
+	time.Sleep(1 * time.Second)
+	go StartService("reservation", 3004)
 	time.Sleep(2 * time.Second)
 }
 
@@ -114,7 +119,62 @@ func TestUser_AddTripleUser(t *testing.T) {
 	assert.False(t, res3.Success)
 }
 
-func TestUser_DeleteUser(t *testing.T) {
+func TestUser_DeleteUser_WithoutReservation(t *testing.T) {
+	user = proto.NewUserService("user", cli)
+
+	us := "user5"
+
+	user5 := &proto.UserRequest{Name: us}
+
+	fix()
+	res1, err1 := user.AddUser(context.TODO(), user5)
+	res2, err2 := user.DeleteUser(context.TODO(), user5)
+
+	assert.Nil(t, err1)
+	assert.True(t, res1.Success)
+
+	assert.Nil(t, err2)
+	assert.True(t, res2.Success)
+}
+
+func TestUser_DeleteUser_WithReservation(t *testing.T) {
+	user = proto.NewUserService("user", cli)
+	movie = proto.NewMovieService("movie", cli)
+	cinemahall = proto.NewCinemahallService("cinemahall", cli)
+	show = proto.NewShowService("show", cli)
+	reservation = proto.NewReservationService("reservation", cli)
+
+	us := "user4"
+	mv := "movie4"
+	cm := "cinemahall4"
+
+	user4 := &proto.UserRequest{Name: us}
+	movie4 := &proto.MovieRequest{MovieTitle: mv}
+	cinemahall4 := &proto.CinemahallRequest{Name: cm, SeatRows: 10, SeatRowCapacity: 10}
+	show4 := &proto.ShowRequest{CinemaHall: cm, Movie: mv}
+	checkReservation4 := &proto.ReservationRequest{UserName: us, Show: 1, Seats: 5}
+	makeReservation4 := &proto.ReservationRequest{ReservationId: 1}
+	deleteReservation4 := &proto.ReservationRequest{ReservationId: 1}
+
+	fix()
+	movie.AddMovie(context.TODO(), movie4)
+	cinemahall.AddCinemahall(context.TODO(), cinemahall4)
+	show.AddShow(context.TODO(), show4)
+	reservation.ReservationInquiry(context.TODO(), checkReservation4)
+	reservation.MakeReservation(context.TODO(), makeReservation4)
+
+	res1, err1 := user.AddUser(context.TODO(), user4)
+	res2, err2 := user.DeleteUser(context.TODO(), user4)
+	res3, err3 := reservation.DeleteReservation(context.TODO(), deleteReservation4)
+
+	assert.Nil(t, err1)
+	assert.True(t, res1.Success)
+
+	assert.Nil(t, err2)
+	assert.True(t, res2.Success)
+
+	assert.Nil(t, err3)
+	assert.False(t, res3.Success)
 
 }
 
