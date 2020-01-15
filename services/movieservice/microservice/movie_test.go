@@ -158,9 +158,9 @@ func TestMovie_DeleteMovie_WithShow(t *testing.T) {
 
 	fix()
 	cinemahall.AddCinemahall(context.TODO(), cinemahall5)
+	res1, err1 := movie.AddMovie(context.TODO(), movie5)
 	show.AddShow(context.TODO(), show5)
 
-	res1, err1 := movie.AddMovie(context.TODO(), movie5)
 	res2, err2 := movie.DeleteMovie(context.TODO(), movie5)
 	res3, err3 := show.DeleteShow(context.TODO(), deleteShow5)
 
